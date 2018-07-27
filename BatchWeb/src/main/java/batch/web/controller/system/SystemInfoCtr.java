@@ -120,9 +120,9 @@ public class SystemInfoCtr extends BaseController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value="/system/threadDump", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<String> getThreadDump(@RequestBody Map<String, Object> sysMap) throws Exception {
+	@RequestMapping(value="/system/threadDump", method = RequestMethod.POST)
+	public String getThreadDump(@RequestBody Map<String, Object> sysMap) throws Exception {
 		
-		return systemInfoSvi.selectThreadInfo();
+		return "/system/threadDump";
 	}
 }

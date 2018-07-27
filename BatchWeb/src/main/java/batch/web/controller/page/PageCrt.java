@@ -18,10 +18,13 @@
 
 package batch.web.controller.page;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -244,5 +247,22 @@ public class PageCrt extends BaseController {
 		SessionUtil.setSession(BaseConstants.SESSION_CURRENT_PAGE, "source/deploySourceApprove");
 		return new ModelAndView("source/deploySourceTarget");
 	}	
-
+	
+	
+	/**
+	 * 
+	 *<pre>
+	 * 1.Description: System thread dump
+	 * 2.Biz Logic:
+	 * 3.Author : LGCNS
+	 *</pre>
+	 * @param sysMap
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value="/system/threadDump", method = RequestMethod.POST)
+	public ModelAndView getThreadDump(@RequestBody Map<String, Object> sysMap) throws Exception {
+		
+		return new ModelAndView("system/threadDump");
+	}
 }
