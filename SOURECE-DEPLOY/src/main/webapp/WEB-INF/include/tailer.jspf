@@ -1,0 +1,14 @@
+<script type="text/javascript">
+	var _InfoTitle="Information";
+	var _ExceptionTitle="Exception";
+	var _Yes="Yes";
+	var _No="No";
+	var _Cancel="Cancel";
+	var _Close="Close";
+	var _ServerName = null;
+	var _Total="Total";
+</script>
+
+<div style="display:none" id="errorMessageDialog"></div>
+<div style="display:none" id="successDialog"></div>
+<div style="display:none" id="dialog-message"></div>

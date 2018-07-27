@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--=========================================================================-->
+<!-- NAME : CommonSQL.xml                                                      -->
+<!-- DESC : Set of SQL statements to manipulate user table                   -->
+<!--=========================================================================-->
+<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+<!-- ==========  ============  ==============================================-->
+<!-- 2017.07.18  Gregorio Kim    Initial Creation                              -->
+<!--=========================================================================-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Page">
+	
+	<!--=========================================================================-->
+	<!-- NAME : pageHeader                                                  -->
+	<!-- DESC : pageHeader                                 -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.07.18  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<sql id="pageHeader">
+		SELECT *
+		  FROM (
+			    SELECT ROWNUM AS RN
+					   ,INNER_SQL.*
+				  FROM (
+	</sql>
+	
+	<!--=========================================================================-->
+	<!-- NAME : pageFooter                                                  -->
+	<!-- DESC : pageFooter                                 -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.07.18  Gregorio Kim    Initial Creation                              -->
+	<!--=========================================================================-->
+	<sql id="pageFooter">
+	<![CDATA[
+              		   ) INNER_SQL
+      		     WHERE ROWNUM <= ( #{currentPage} * #{pageRowCount} )
+		      )
+	    WHERE RN > ( ( #{currentPage} -1 ) * #{pageRowCount} )
+	]]>
+	</sql>
+	
+	<!--=========================================================================-->
+	<!-- NAME : pageOffset                                                  -->
+	<!-- DESC : pageOffset                                 -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.08.03  Gregorio Kim    Initial Creation                              -->
+	<!--=========================================================================-->
+	<sql id="pageOffset">
+	<![CDATA[
+    	OFFSET ( ( #{iPage} -1 ) * #{iPgSz} ) ROWS FETCH NEXT #{iPgSz} ROWS ONLY
+	]]>
+	</sql>
+
+	<sql id="mysqlpageOffset">
+	<![CDATA[
+    	LIMIT #{curRowCount},  #{pageRowCount}
+	]]>
+	</sql>
+
+</mapper>

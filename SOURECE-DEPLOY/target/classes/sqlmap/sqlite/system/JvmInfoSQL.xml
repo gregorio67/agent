@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--=========================================================================-->
+<!-- NAME : BatchResultSQL.xml                                               -->
+<!-- DESC : Batch Job Result                                                 -->
+<!--=========================================================================-->
+<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+<!-- ==========  ============  ==============================================-->
+<!-- 2017.09.14  Gregorio Kim    Initial Creation 	                         -->
+<!--=========================================================================-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="web.jvminfo">
+
+
+	<!--=========================================================================-->
+	<!-- NAME : selSysInfoCount                                                  -->
+	<!-- DESC : Retrieve  Count										             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selJvmInfoCount" parameterType="hashmap" resultType="java.lang.Integer">
+		SELECT COUNT(*) AS CNT
+		FROM JVM_INFO
+		WHERE 1 = 1
+		<if test="hostName != null and hostName !=''">
+		AND HOST_NAME = #{hostName}
+		</if>
+		<if test="jvmName != null and jvmName !=''">
+		AND JVM_NAME = #{jvmName}
+		</if>
+	</select>
+	
+	
+	<!--=========================================================================-->
+	<!-- NAME : selSysInfoList                                                   -->
+	<!-- DESC : Retrieve  HOST Information                                       -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selJvmInfoList" parameterType="hashmap" resultType="camelMap">
+		SELECT 
+		    	HOST_NAME
+		    	,JVM_NAME
+				,PROCESS_ID	
+				,PRINTF("%.2f", (HEAP_INIT/1024.00/1024.00)) || 'MB' HEAP_INIT		
+				,PRINTF("%.2f", (HEAP_MAX/1024.00/1024.00)) ||  'MB' HEAP_MAX		
+				,PRINTF("%.2f", (HEAP_USAGE/1024.00/1024.00)) || 'MB' HEAP_USAGE
+				,PRINTF("%.2f", (HEAP_FREE/1024.00/1024.00)) || 'MB' HEAP_FREE
+				,TOTAL_THREAD
+				,CURRENT_THREAD
+				,PEAK_THREAD
+				,USE_YN
+				,STRFTIME('%Y-%m-%d:%H:%M:%S', DATETIME(REG_DATE/1000, 'unixepoch')) REG_DATE
+				,REG_USER
+		FROM  JVM_INFO
+		WHERE 1 = 1
+		<if test="hostName != null and hostName !=''">
+		AND   HOST_NAME =  #{hostName} 
+		</if> 
+		<if test="jvmName != null and jvmName !=''">
+		AND   JVM_NAME =  #{jvmName} 
+		</if> 
+		ORDER BY JVM_NAME 
+	</select>
+	<!--=========================================================================-->
+	<!-- NAME : selStepHist                                                      -->
+	<!-- DESC : Retrieve  Step History from spring batch framework               -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selJvmInfo" parameterType="hashmap" resultType="camelMap">
+		SELECT 	 HOST_NAME
+				,JVM_NAME     
+				,PROCESS_ID	
+				,PRINTF("%.2f", (HEAP_INIT/1024.00/1024.00)) || 'MB' HEAP_INIT		
+				,PRINTF("%.2f", (HEAP_MAX/1024.00/1024.00)) ||  'MB' HEAP_MAX		
+				,PRINTF("%.2f", (HEAP_USAGE/1024.00/1024.00)) || 'MB' HEAP_USAGE
+				,PRINTF("%.2f", (HEAP_FREE/1024.00/1024.00)) || 'MB' HEAP_FREE
+				,TOTAL_THREAD
+				,CURRENT_THREAD
+				,PEAK_THREAD
+				,USE_YN
+				,STRFTIME('%Y-%m-%d:%H:%M:%S', DATETIME(REG_DATE/1000, 'unixepoch')) REG_DATE
+				,REG_USER	 
+		FROM JVM_INFO
+		WHERE 1 = 1
+		AND HOST_NAME = #{hostName}
+		AND JVM_NAME = #{jvmName}
+	</select>
+	<!--=========================================================================-->
+	<!-- NAME : insMenu                                                  	    -->
+	<!-- DESC : Insert Menu											             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->	
+	<insert id="insJvmInfo" parameterType="java.util.Map">
+		INSERT INTO JVM_INFO (
+				 HOST_NAME
+				,JVM_NAME     
+				,PROCESS_ID	
+				,HEAP_INIT		
+				,HEAP_MAX		
+				,HEAP_USAGE    
+				,HEAP_FREE     
+				,TOTAL_THREAD  
+				,CURRENT_THREAD
+				,PEAK_THREAD   
+				,USE_YN        
+				,REG_DATE      
+				,REG_USER    
+		)
+		VALUES (
+			 #{hostName}
+			,#{jvmName}
+		 	,#{processId}
+		 	,#{heapInit}
+		 	,#{heapMax}
+		 	,#{heapUsage}
+		 	,#{heapFree}
+		 	,#{totalThread}
+		 	,#{currentThread}
+		 	,#{peakThread}
+		 	,#{useYn}
+		 	,CURRENT_TIMESTAMP
+		 	,#{regUser}
+		)	
+	</insert>
+	<update id="updJvmInfo" parameterType="java.util.Map">
+		UPDATE JVM_INFO
+		SET 
+			 REG_DATE = CURRENT_TIMESTAMP
+		<if test="processId != null and processId !=''">
+			,PROCESS_ID	= #{processId}
+		</if>			
+		<if test="heapInit != null">
+			,HEAP_INIT = #{heapInit}		
+		</if>			
+		<if test="heapMax != null">
+			,HEAP_MAX = #{heapMax}		
+		</if>			
+		<if test="heapUsage != null">
+			,HEAP_USAGE = #{heapUsage}   
+		</if>			
+		<if test="heapFree != null">
+			,HEAP_FREE  = #{heapFree}   
+		</if>			
+		<if test="totalThread != null">
+			,TOTAL_THREAD = #{totalThread} 
+		</if>			
+		<if test="currentThread != null">
+			,CURRENT_THREAD = #{currentThread}
+		</if>			
+		<if test="peakThread != null">
+			,PEAK_THREAD = #{peakThread}  
+		</if>			
+		<if test="useYn != null and useYn !=''">
+			,USE_YN = #{useYn}       
+		</if>			
+		<if test="regUser != null and regUser !=''">
+			,REG_DATE = #{regUser}     
+		</if>			
+			
+		WHERE 1 = 1
+		AND   HOST_NAME = #{hostName}
+		AND   JVM_NAME = #{jvmName}	   
+	</update>
+</mapper>

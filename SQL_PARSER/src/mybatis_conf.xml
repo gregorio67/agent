@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC" />
+            <dataSource type="POOLED">
+                <property name="driver" value="oracle.jdbc.OracleDriver" />
+                <property name="url" value="jdbc:oracle:thin:@172.6.14.212:1521:TCS" />
+                <property name="username" value="lots_main" />
+                <property name="password" value="lotsmain!2016" />
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="sql/serviceSQL.xml" />
+        <mapper resource="sql/apiCmSQL.xml" />
+		<mapper url="file://C:/STIS/workspace/SEHATI_DSC/src/main/resources/sqlmap/sql/*SQL.xml" /> 
+    </mappers>
+</configuration>

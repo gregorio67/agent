@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:task="http://www.springframework.org/schema/task"
+        xmlns:mvc="http://www.springframework.org/schema/mvc"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+                http://www.springframework.org/schema/task	http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+
+	<task:annotation-driven  executor="taskExecutor" scheduler="scheduler"/>
+	
+	<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+	    <property name="corePoolSize" value="100"/>
+	    <property name="maxPoolSize" value="100"/>
+	    <property name="queueCapacity" value="2000000000"/>
+	    <property name="keepAliveSeconds" value="120"/>
+	</bean> 
+	
+	<task:scheduler id="scheduler" pool-size="10"/>
+	
+	
+	    <!-- job bean -->
+    <bean id="jobScheduler" class="batch.web.service.impl.CronScheduleSvc" />
+
+	<!-- Collect JVM Information -->
+	<bean id="systemScheduler" class="batch.web.service.impl.SystemInfoSvc" />
+	
+    <task:scheduled-tasks> <!-- scheduled job list -->
+        <!-- task:scheduled ref="jobSchedule" method="executeJobCheck" cron="0/30 * * * * ?"/-->
+        <task:scheduled ref="jobScheduler" method="cronJobCheck" cron="#{system['batch.cron.expression']}"/>
+        <!-- Collect JVM Information -->
+        <task:scheduled ref="systemScheduler" method="saveJvmInfo" cron="#{system['jvm.cron.expression']}"/>
+        <!-- add more job here -->
+    </task:scheduled-tasks>
+</beans>

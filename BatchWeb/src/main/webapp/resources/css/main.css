@@ -1,0 +1,115 @@
+@CHARSET "EUC-KR";
+@import url(http://fonts.googleapis.com/css?family=Droid+Serif);
+h2{
+text-align: center;
+font-size: 24px;
+}
+h4{
+text-align: center;
+font-size: 13px;
+color: red;
+}
+hr{
+margin-bottom: 30px;
+}
+div.container{
+width: 600px;
+height: 300px;
+margin:150px;
+font-family: 'Droid Serif', serif;
+position:relative;
+}
+div.main{
+    width: 500px;
+    height: auto;
+    margin-top: 0px;
+    margin-left: 0px;
+    background-color: rgba(30, 144, 255, 0.65098);
+    border-image-source: initial;
+    border-image-slice: initial;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    box-shadow: 0px 0px 10px;
+    font-size: 13px;
+    padding: 10px 55px 40px;
+    border-width: 15px;
+    border-style: solid;
+    border-color: white;
+    border-radius: 2px;
+}
+input[type=text],[type=password] {
+width: 200px;
+height: 24px;
+padding-left: 14px;
+margin-bottom: 20px;
+margin-top: 8px;
+box-shadow: 0 0 5px #00F5FF;
+border: 1px solid #00F5FF;
+color: #4f4f4f;
+font-size: 16px;
+}
+
+label{
+color: #464646;
+text-shadow: 0 1px 0 #fff;
+font-size: 12px;
+font-weight: bold;
+}
+
+input.top_button {
+width: 80px;
+background: linear-gradient(#22abe9 5%, #36caf0 100%);
+border: 1px solid #0F799E;
+font-size: 11px;
+margin-top: 15px;
+padding: 8px;
+font-weight: bold;
+cursor: pointer;
+color: white;
+text-shadow: 0px 1px 0px #13506D;
+}
+
+button {
+width: 80px;
+background: linear-gradient(#22abe9 5%, #36caf0 100%);
+border: 1px solid #0F799E;
+font-size: 11px;
+margin-top: 15px;
+padding: 8px;
+font-weight: bold;
+cursor: pointer;
+color: white;
+text-shadow: 0px 1px 0px #13506D;
+}
+
+#Search {
+width: 100px;
+background: linear-gradient(#22abe9 5%, #36caf0 100%);
+border: 1px solid #0F799E;
+font-size: 12px;
+margin-top: 15px;
+padding: 8px;
+font-weight: bold;
+cursor: pointer;
+color: white;
+text-shadow: 0px 1px 0px #13506D;
+}
+
+#Search:hover{
+background: linear-gradient(#36caf0 5%, #22abe9 100%);
+}
+
+table, td, th {
+    border: 1px solid blue;
+    font-size: 13px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+    height: 40px;
+}

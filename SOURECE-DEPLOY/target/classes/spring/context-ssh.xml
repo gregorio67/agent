@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+						http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+	<bean id="sshService" class="cmn.deploy.ssh.SSHService">
+		<property name="connectionTimeout" value="3000" />
+	</bean>
+	
+	<util:map id="sshSession">
+		<entry key="keyFile" value="D:/01.Projects/Bharein/AWS/hira-dev.pem" />
+		<entry key="stgBastion" value="34.247.222.144|developer|sehati2018!" />
+		<entry key="ciServer" value="10.255.116.51|ec2-user" />
+	</util:map>
+	
+	<util:map id="buildFilePath">
+		<entry key="buildPath" value="/engn001/ciserv/hudson/jobs/" />
+		<entry key="PORTAL-WAS" value="SEHATI-PORTAL-DEV/workspace/|portal.war" />
+		<entry key="PORTAL-WEB" value="SEHATI-PORTAL-WEB-DEV/workspace/target/web/|portal-web.zip" />
+		<entry key="PORTAL-OZ" value="SEHATI-OZ-DEV/workspace/target/|sehati-oz_PORTAL.zip" />
+		<entry key="IBM-WAS" value="SEHATI-IBM-DEV/workspace/|ibm.war" />
+		<entry key="IBM-WEB" value="SEHATI-IBM-WEB-DEV/workspace/target/web/|ibm-web.zip" />
+		<entry key="IBM-OZ" value="SEHATI-OZ-DEV/workspace/target/|sehati-oz_IBM.zip" />
+		<entry key="DSC-WAS" value="SEHATI-DSC-DEV/workspace/target/|sehati-dsc-0.0.1-SNAPSHOT.war" />
+		<entry key="BATCH" value="SEHATI-BATCH-DEV/workspace/target/|SEHATI-BATCH.jar" />
+		
+	</util:map>
+	
+</beans>

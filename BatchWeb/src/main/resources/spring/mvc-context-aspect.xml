@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+						http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+	<aop:config>
+		<aop:pointcut id="mvcMethod" expression="execution(* batch.web..*.*(..))" />
+
+		<aop:aspect ref="exceptionTransfer">
+			<aop:after-throwing throwing="exception" pointcut-ref="mvcMethod" method="transfer" />
+		</aop:aspect>
+	</aop:config>
+	
+	<bean id="mvcExceptionTransfer" class="egovframework.rte.fdl.cmmn.aspect.ExceptionTransfer">
+		<property name="exceptionHandlerService">
+			<list>
+				<ref bean="mvcExceptionHandleManager" />
+				<!-- ref bean="otherExceptionHandleManager" /-->
+			</list>
+		</property>
+	</bean>
+
+	<bean id="mvcExceptionHandleManager" class="egovframework.rte.fdl.cmmn.exception.manager.DefaultExceptionHandleManager">
+		<property name="reqExpMatcher">
+			<ref bean="antPathMater"/>
+		</property>
+		<property name="patterns">
+			<list>
+				<value>*.*</value>
+			</list>
+		</property>
+		<property name="handlers">
+			<list>
+				<ref bean="mvcExceptionHandler" />
+			</list>
+		</property>
+	</bean>
+
+	<!-- bean id="otherExceptionHandleManager" class="egovframework.rte.fdl.cmmn.exception.manager.DefaultExceptionHandleManager">
+		<property name="reqExpMatcher">
+			<ref bean="antPathMater"/>
+		</property>
+		<property name="patterns">
+			<list>
+				<value>**controller.*</value>
+			</list>
+		</property>
+		<property name="handlers">
+			<list>
+				<ref bean="kicsOtherHandler" />
+			</list>
+		</property>
+	</bean-->
+
+	<bean id="mvcExceptionHandler" class="taxris.framework.exception.LExceptionHandler" />
+	<bean id="antPathMater" class="org.springframework.util.AntPathMatcher" />
+
+	<!-- bean id="kicsOtherHandler" class="kics.framework.exception.KicsExceptionOtherHandler" /-->
+	<!-- bean id="exceptionResolver" class="kics.framework.exception.KicsExceptionResolver" /-->
+</beans>

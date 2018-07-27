@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="http://batch.com/springbeans/condition"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:beans="http://www.springframework.org/schema/beans"
+            targetNamespace="http://batch.com/springbeans/condition"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified">  
+<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />  
+ 
+<xsd:annotation> 
+ 
+	<xsd:documentation>
+		<![CDATA[ 
+	       Defines the configuration elements for My Comany Spring Framework's conditional bean creation. 
+	       Limitations: 
+	 
+	       1. The spring-beans-2.0.xsd forces you to define a <if:condition/>
+	          for single beans - you cannot put a <if:condition/> block around a group of beans. 
+	       2. The spring-beans-2.0.xsd prevents you from defining two beans with the same name 
+	          in the same XML file, even if different <if:condition/> conditions guarantee only
+	          one of the definitions will be in force at any given time. 
+		]]>
+	</xsd:documentation> 
+</xsd:annotation>
+ 
+<xsd:element name="condition">
+	<xsd:complexType>
+		<xsd:sequence>
+        	<xsd:any minOccurs="0" />
+    	</xsd:sequence> 	      
+      	<xsd:attribute name="test" type="xsd:string" use="required"> 	 
+	    	<xsd:annotation>
+	        	<xsd:documentation>
+					<![CDATA[
+			        	Define the param value that need to tested as a condition for bean creation. 
+			            For example if '${myCondition}=true' then the following child bean will be instantiated.
+			        ]]>
+	       		</xsd:documentation> 
+	       </xsd:annotation> 
+		</xsd:attribute> 
+       	<xsd:attribute name="varnames" type="xsd:string" use="optional"> 
+	       	<xsd:annotation>
+		           <xsd:documentation>
+			           <![CDATA[ 
+			               Define the param name that need to be tested against the set of property source provided in the src attribute.
+			           ]]>
+		      	</xsd:documentation> 
+	       	</xsd:annotation>
+       	</xsd:attribute> 
+       	<xsd:attribute name="src" type="xsd:string" use="required"> 
+	       	<xsd:annotation>
+		       	<xsd:documentation>
+		       		<![CDATA[ 
+		              Define the property file/xml from which the test param can be loaded.
+		            ]]>
+		       	</xsd:documentation> 
+	      	</xsd:annotation>
+       	</xsd:attribute> 
+	</xsd:complexType> 
+</xsd:element>
+</xsd:schema>

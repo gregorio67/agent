@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="sqlParser" default="main" basedir=".">
+
+   <property name="src.dir"     value="src"/>
+   <property name="build.dir"   value="build"/>
+   <property name="classes.dir" value="${build.dir}/classes"/>
+   <property name="jar.dir"     value="${build.dir}/jar"/>
+   <property name="lib.dir"     value="lib"/>
+   <property name="sql.dir"     value="${classes.dir}/sql"/>
+   <property name="target.lib.dir"     value="${classes.dir}/lib"/>
+   <property name="main-class"  value="dymn.sql.main.ParserMain"/>
+
+
+	<path id="classpath">
+		<fileset dir="${basedir}/">
+			<include name="${lib.dir}/*.jar" />
+		</fileset>
+	</path>
+
+	<pathconvert property="manifest.classpath" pathsep=" ">
+	  <path refid="classpath"/>
+	  <mapper>
+	    <chainedmapper>
+	       <flattenmapper/>
+	       <globmapper from="*.jar" to="lib/*.jar"/>
+	    </chainedmapper>
+	  </mapper>
+	</pathconvert>
+	
+	
+    <target name="main" depends="clean,compile, jar"/>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="compile" depends="clean">
+        <mkdir dir="${classes.dir}"/>
+        <javac includeantruntime="false" srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" />
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+		<mkdir dir="${sql.dir}"/>
+    	<!-- copy sql file -->
+    	<copy todir="${sql.dir}">
+    		<fileset dir="${src.dir}/sql" />
+    	</copy>
+    	<copy todir="${target.lib.dir}">
+    		<fileset dir="${lib.dir}" />
+    	</copy>
+
+        <jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            	<attribute name="Class-Path" value="${manifest.classpath}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!--target name="run" depends="jar">
+        <java jar="${jar.dir}/${ant.project.name}.jar" fork="true"/>
+    </target-->
+	
+</project>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--=========================================================================-->
+<!-- NAME : BatchResultSQL.xml                                               -->
+<!-- DESC : Batch Job Result                                                 -->
+<!--=========================================================================-->
+<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+<!-- ==========  ============  ==============================================-->
+<!-- 2017.09.14  Greoorio Kim    Initial Creation                            -->
+<!--=========================================================================-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="web.jobHist">
+	
+	<resultMap type="batch.web.vo.CamelMap" id="jobResult">
+		<result property="jobInstanceId" column="JOB_INSTANCE_ID" />
+		<result property="jobName" column="JOB_NAME" />
+		<result property="jobExecutionId" column="JOB_EXECUTION_ID" />
+		<result property="jobStartTiem" column="START_TIME" typeHandler="batch.web.mybatis.DateTypeHandler"/>
+		<result property="jobEndTime" column="END_TIME" typeHandler="batch.web.mybatis.DateTypeHandler"/>
+		<result property="jobStatus" column="STATUS" />
+	</resultMap>
+	<!--=========================================================================-->
+	<!-- NAME : selJobHist                                                       -->
+	<!-- DESC : Retrieve  Job History from spring batch framework                -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selJobHistCount" parameterType="hashmap" resultType="java.lang.Integer">
+		SELECT COUNT(*) AS CNT
+		FROM BATCH_JOB_INSTANCE A,
+		     BATCH_JOB_EXECUTION B,
+		     BATCH_JOB_LIST D
+		WHERE 1 = 1
+		AND   A.JOB_INSTANCE_ID = B.JOB_INSTANCE_ID
+		AND   A.JOB_NAME= D.JOB_NAME
+		<if test="regUser != null and regUser !=''">
+		AND   D.REG_USER =  #{regUser} 
+		</if> 
+		<if test="jobName != null and jobName !=''">
+		AND   A.JOB_NAME LIKE '%' || #{jobName} || '%'
+		</if> 
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+		AND STR_TO_DATE(B.START_TIME,'%Y-%m-%d') >= STR_TO_DATE(#{fromDt}, '%Y-%m-%d')
+		]]>
+		</if>
+		<if test="toDt != null and toDt != ''">
+		<![CDATA[
+		AND   STRFTIME('%Y-%m-%d', B.START_TIME) <= STRFTIME('%Y-%m-%d', #{toDt} )
+		]]>
+		</if>
+
+		ORDER BY B.START_TIME DESC,  A.JOB_NAME 
+
+	</select>	
+	<!--=========================================================================-->
+	<!-- NAME : selJobHistParams                                                 -->
+	<!-- DESC : Retrieve  Job Parameter with execution Id		                 -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->	
+	<select id="selJobHistParams" parameterType="hashmap" resultType="java.lang.String">
+		SELECT STRING_VAL
+		FROM BATCH_JOB_EXECUTION_PARAMS
+		WHERE 1 = 1
+		AND JOB_EXECUTION_ID = ${jobExecutionId}
+	</select>
+	<!--=========================================================================-->
+	<!-- NAME : selJobHist                                                       -->
+	<!-- DESC : Retrieve  Job History from spring batch framework                -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selJobHist" parameterType="hashmap" resultMap="jobResult">
+		SELECT 
+		     A.JOB_INSTANCE_ID 
+		    ,A.JOB_NAME 
+		    ,B.JOB_EXECUTION_ID
+		    ,STRFTIME('%Y-%m-%d:%H:%M:%S', DATETIME(B.START_TIME/1000, 'unixepoch')) JOB_START_TIME 
+		    ,STRFTIME('%Y-%m-%d:%H:%M:%S', DATETIME(B.END_TIME/1000, 'unixepoch')) JOB_END_TIME
+		    ,B.STATUS JOB_STATUS
+		FROM  BATCH_JOB_INSTANCE A
+		     ,BATCH_JOB_EXECUTION B
+		     ,BATCH_JOB_LIST D
+		WHERE 1 = 1
+		AND   A.JOB_INSTANCE_ID = B.JOB_INSTANCE_ID
+		AND   A.JOB_NAME= D.JOB_NAME
+		<if test="regUser != null and regUser !=''">
+		AND   D.REG_USER =  #{regUser} 
+		</if> 
+		<if test="jobName != null and jobName !=''">
+		AND   A.JOB_NAME LIKE '%' || #{jobName} || '%'
+		</if> 
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+		AND STRFTIME(%Y-%m-%d', B.START_TIME) >= STRFTIME('%Y-%m-%d', #{fromDt})
+		]]>
+		</if>
+		<if test="toDt != null and toDt != ''">
+		<![CDATA[
+		AND   STRFTIME('%Y-%m-%d', B.START_TIME) <= STRFTIME('%Y-%m-%d', #{toDt})
+		]]>
+		</if>
+		ORDER BY B.START_TIME DESC,  A.JOB_NAME 
+		<include refid="Page.mysqlpageOffset" />
+	</select>
+	
+
+	<!--=========================================================================-->
+	<!-- NAME : selStepHist                                                      -->
+	<!-- DESC : Retrieve  Step History from spring batch framework               -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selStepHist" parameterType="hashmap" resultType="camelMap">
+		SELECT B.STEP_NAME
+			   ,STRFTIME('%Y-%m-%d:%H:%M:%S', DATETIME(B.START_TIME/1000, 'unixepoch')) STEP_START_TIME 
+			   ,STRFTIME('%Y-%m-%d:%H:%M:%S', DATETIME(B.END_TIME/1000, 'unixepoch')) STEP_END_TIME 			   	
+		       ,B.STATUS
+		       ,B.READ_COUNT
+		       ,B.WRITE_COUNT
+		       ,B.EXIT_CODE
+		       ,B.EXIT_MESSAGE
+		FROM   BATCH_JOB_EXECUTION A,
+		       BATCH_STEP_EXECUTION B  
+		WHERE  1 = 1
+		AND    A.JOB_EXECUTION_ID = B.JOB_EXECUTION_ID
+		AND    A.JOB_EXECUTION_ID = #{jobExecutionId}
+		ORDER BY B.START_TIME
+
+	</select>
+	<!--=========================================================================-->
+	<!-- NAME : selRecentJobHist                                                 -->
+	<!-- DESC : Retrieve  Recent Job Result							             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->	
+	<select id="selRecentJobHist" parameterType="hashmap" resultMap="jobResult">
+		SELECT * 
+		FROM (
+		     SELECT  A.JOB_INSTANCE_ID 
+		            ,A.JOB_NAME 
+		            ,B.JOB_EXECUTION_ID 
+		            ,B.START_TIME JOB_START_TIME
+		            ,B.END_TIME JOB_END_TIME
+		            ,B.STATUS JOB_STATUS
+		      FROM BATCH_JOB_INSTANCE A,
+		           BATCH_JOB_EXECUTION B
+		      WHERE 1 = 1
+		      AND   A.JOB_INSTANCE_ID = B.JOB_INSTANCE_ID
+		      ORDER BY B.END_TIME DESC) RESCENT_JOB
+		 <choose>
+		 	<when test="dbtype != 'oracle'">
+			LIMIT 10
+		 	</when>
+		 	<otherwise>
+			 <![CDATA[
+			 WHERE ROWNUM <= 10
+			 ]]>
+		 	</otherwise>
+		 </choose>     
+	</select>
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/jdbc  http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
+
+
+	
+	<!-- if:condition test="${(#{system['database.type']} == 'sqlite')}">
+	</if:condition-->
+	<beans profile="sqlite">
+		<!-- SQLIITE  -->
+		<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<property name="jndiName" value="batchweb" />
+			<property name="resourceRef" value="true" />
+		</bean>	
+	</beans>
+	
+	<beans profile="oracle,mysql">
+		<bean id="batchWebJndi" class="org.springframework.jndi.JndiObjectFactoryBean">
+			<property name="jndiName" value="batchweb" />
+			<property name="resourceRef" value="true" />
+		</bean>    
+	    <bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+	        <constructor-arg ref="batchWebJndi" />
+	        <property name="logFormatter">
+	            <bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+	                <property name="loggingType" value="MULTI_LINE" />
+	                <property name="sqlPrefix" value="SQL -> " />
+	            </bean>
+	        </property>
+	    </bean>
+	</beans>
+	
+	<beans>
+	     <!-- SqlSession setup for MyBatis Database Layer -->
+		<bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+			<property name="dataSource" ref="dataSource" />
+			<property name="configLocation" value="classpath:/sqlmap/config/mybatis-config.xml" />
+			<property name="mapperLocations">
+				<list>
+					<value>classpath:/sqlmap/cmn/*SQL.xml</value>
+					<value>classpath:/sqlmap/#{system['database.type']}/**/*SQL.xml</value>
+				</list>
+			</property>
+		</bean>   
+	    
+		<!-- Set JdbcTemplate for directly execute sql -->
+	   	<bean name="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+			<property name="dataSource" ref="dataSource" />
+		</bean>
+		    
+	    <bean id="baseDao" class="batch.web.base.BaseDao">
+	    	<property name="sqlSessionFactory" ref="sqlSession" />
+	    </bean>
+	</beans>        
+</beans>

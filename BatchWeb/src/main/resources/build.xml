@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="all" name="ant-build">
+	
+  	<!--property source="D:/temp/source/taxris"/>
+  	<property target="D:/temp/target/taxris"/-->
+	<!--property name="java.home" value="C:/STIS/bin/jdk1.7.0_80" />
+	<property environment="env"/>
+	<property name="lib.dir" value="C:/STIS/bin/aws" /-->
+	
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+	</path>
+	
+	
+	<target name="all" depends="env, java-compile"/>
+	
+	<target name="env" description="Prints build parameters">
+	    <echo>
+		  Global settings:
+		    java.home = ${java.home}
+	    </echo>
+	</target>
+	
+	<target name="java-compile" depends="env">
+		<echo> LibDir : ${lib.dir} </echo>
+		<javac target="1.7" source="1.7" srcdir="${src.dir}" destdir="${build.dir}" debug="on" includeantruntime="true"
+			compiler="extjavac" executable="${java.home}/bin/javac"	encoding="UTF-8">
+		    <include name="**/*.java"/>
+			<classpath refid="classpath"/>
+		</javac>
+	</target>	
+</project>

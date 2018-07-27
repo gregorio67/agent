@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--=========================================================================-->
+<!-- NAME : BatchResultSQL.xml                                               -->
+<!-- DESC : Batch Job Result                                                 -->
+<!--=========================================================================-->
+<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+<!-- ==========  ============  ==============================================-->
+<!-- 2017.09.14  Greoorio Kim    Initial Creation                            -->
+<!--=========================================================================-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="deploy.target">
+	
+	<!--=========================================================================-->
+	<!-- NAME : selStepHist                                                      -->
+	<!-- DESC : Retrieve  Step History from spring batch framework               -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selDeployTargetItem" parameterType="hashmap" resultType="camelMap">
+		SELECT    BIZ_NAME       		
+			     ,SOURCE_DIR
+			     ,TARGET_WEB_IP_ADDR1
+			     ,TARGET_WEB_IP_ADDR2
+			     ,TARGET_WEB_IP_ADDR3
+			     ,TARGET_WEB_IP_ADDR4
+			     ,TARGET_WAS_IP_ADDR1
+			     ,TARGET_WAS_IP_ADDR2
+			     ,TARGET_WAS_IP_ADDR3
+			     ,TARGET_WAS_IP_ADDR4
+			     ,USE_YN          		
+			     ,STRFTIME('%Y-%m-%d:%H:%M:%S', DATETIME(REG_DATE/1000, 'unixepoch')) REG_DATE         		
+			     ,REG_USER        		
+		FROM   DEPLOY_TARGET
+		WHERE  1 = 1
+		AND    BIZ_NAME = #{bizName}
+		AND    USE_YN = 'Y'
+	</select>
+	
+	<select id="selHostNameList" parameterType="hashmap" resultType="camelMap">
+		SELECT BIZ_NAME
+		FROM   DEPLOY_TARGET
+		WHERE  1 = 1
+		AND    USE_YN = 'Y' 
+	</select>
+</mapper>

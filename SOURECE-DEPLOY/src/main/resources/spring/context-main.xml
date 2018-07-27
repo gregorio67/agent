@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+						http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+	<!--====================================================================================================
+	= 기본 Spring Framework Application Context 환경설정
+	=====================================================================================================-->
+
+	<!-- Component Scan : 시스템 공통 -->
+	<context:component-scan base-package="cmn.deploy">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+	</context:component-scan>
+
+	<!-- Import Configuration -->
+	<!-- 작성요령1. 모든 Service Layer이후 Bean 환경설정 로딩은 해당 파일에서 시작한다 -->
+	<!-- 작성요령2. 로딩 순서는 상호 의존성을 고려하여 순서대로 입력한다 -->
+
+	<!-- [Begin]Core Components -->
+
+	<!-- Property Configuration -->
+	<import resource="classpath:spring/context-properties.xml" />
+
+	<!-- Common Configuration -->
+	<import resource="classpath:spring/context-message.xml" />
+
+	<!-- Datasource Configuration -->
+	<import resource="classpath:spring/context-datasource.xml" />
+	
+	<!--Transaction Configuration -->
+	<import resource="classpath:spring/context-transaction.xml" />
+
+	<import resource="classpath:spring/context-httpclient.xml" />
+
+	<import resource="classpath:spring/context-ssh.xml" />
+
+	<bean id="antPathMater" class="org.springframework.util.AntPathMatcher" />
+	
+	<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+	
+	<!-- [End]Extension Components -->
+</beans>

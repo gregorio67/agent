@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--=========================================================================-->
+<!-- NAME : BatchResultSQL.xml                                               -->
+<!-- DESC : Batch Job Result                                                 -->
+<!--=========================================================================-->
+<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+<!-- ==========  ============  ==============================================-->
+<!-- 2017.09.14  Gregorio Kim    Initial Creation 	                         -->
+<!--=========================================================================-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="web.sysinfo">
+
+
+	<!--=========================================================================-->
+	<!-- NAME : selSysInfoCount                                                  -->
+	<!-- DESC : Retrieve  Count										             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selHostPerf" parameterType="hashmap" resultType="java.lang.Integer">
+		SELECT COUNT(*) AS CNT
+		FROM HOST_INFO
+		WHERE 1 = 1
+		<if test="hostName != null and hostName !=''">
+		AND HOST_NAME = #{hostName}
+		</if>
+	</select>
+	
+	
+	<!--=========================================================================-->
+	<!-- NAME : selSysInfoList                                                   -->
+	<!-- DESC : Retrieve  HOST Information                                       -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selSysInfoList" parameterType="hashmap" resultType="camelMap">
+		SELECT 
+		    	HOST_NAME     
+				,IP_ADDR       
+				,LOG_FILE_DIR  
+				,APP_LOG_FILE  
+				,ERR_LOG_FILE  
+				,SQL_LOG_FILE  
+				,PRINTF("%.2f", CPU_USAGE) CPU_USAGE
+				,PRINTF("%.2f", MEM_USAGE) MEM_USAGE
+				,STRFTIME('%Y-%m-%d:%H:%M:%S', DATETIME(REG_DATE/1000, 'unixepoch')) REG_DATE
+				,REG_USER
+		FROM  HOST_INFO
+		WHERE 1 = 1
+		<if test="hostName != null and hostName !=''">
+		AND   HOSTNAME =  #{hostName} 
+		</if> 
+		ORDER BY HOST_NAME 
+		<include refid="Page.mysqlpageOffset" />
+	</select>
+	<!--=========================================================================-->
+	<!-- NAME : selStepHist                                                      -->
+	<!-- DESC : Retrieve  Step History from spring batch framework               -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selSysInfo" parameterType="hashmap" resultType="camelMap">
+		SELECT 	 HOST_NAME     
+				,IP_ADDR       
+				,LOG_FILE_DIR  
+				,APP_LOG_FILE  
+				,ERR_LOG_FILE  
+				,SQL_LOG_FILE  
+				,CPU_USAGE     
+				,MEM_USAGE     
+				,USE_YN
+				,STRFTIME('%Y-%m-%d:%H:%M:%S', DATETIME(REG_DATE/1000, 'unixepoch')) REG_DATE
+				,REG_USER	 
+		FROM HOST_INFO
+		WHERE 1 = 1
+		<if test="hostName != null and hostName != ''">
+		AND HOST_NAME = #{hostName}
+		</if>
+	</select>
+	<!--=========================================================================-->
+	<!-- NAME : insMenu                                                  	    -->
+	<!-- DESC : Insert Menu											             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->	
+	<insert id="insSysInfo" parameterType="java.util.Map">
+		INSERT INTO HOST_INFO (
+				 HOST_NAME     
+				,IP_ADDR       
+				,LOG_FILE_DIR  
+				,APP_LOG_FILE  
+				,ERR_LOG_FILE  
+				,SQL_LOG_FILE  
+				,CPU_USAGE     
+				,MEM_USAGE     
+				,USE_YN        
+				,REG_DATE      
+				,REG_USER    
+		)
+		VALUES (
+			 #{hostName}
+		 	,#{ipAddr}
+		 	,#{logFileDir}
+		 	,#{appLogFile}
+		 	,#{errLogFile}
+		 	,#{sqlLogFile}
+		 	,#{cpuUsage}
+		 	,#{memUsage}
+		 	,#{useYn}
+		 	,#{regDate} 
+		 	,#{regUser}
+		)	
+	</insert>
+	<update id="updSysInfo" parameterType="java.util.Map">
+		UPDATE HOST_INFO
+		SET 
+			 REG_DATE = CURRENT_TIMESTAMP
+		<if test="logFileDir != null and logFileDir !=''">
+			,LOG_FILE_DIR = #{logFileDir}  
+		</if>			
+		<if test="appLogFile != null and appLogFile !=''">
+			,APP_LOG_FILE = #{appLogFile} 
+		</if>			
+		<if test="errLogFile != null and errLogFile !=''">
+			,ERR_LOG_FILE = #{errLogFile} 
+		</if>			
+		<if test="sqlLogFile != null and sqlLogFile !=''">
+			,SQL_LOG_FILE = #{sqlLogFile} 
+		</if>			
+		<if test="cpuUsage != null">
+			,CPU_USAGE = #{cpuUsage}    
+		</if>			
+		<if test="memUsage != null">
+			,MEM_USAGE = #{memUsage}    
+		</if>			
+		<if test="useYn != null and useYn !=''">
+			,USE_YN = #{useYn}       
+		</if>			
+		<if test="regUser != null and regUser !=''">
+			,REG_DATE = #{regUser}     
+		</if>			
+			
+		WHERE 1 = 1
+		AND   HOST_NAME = #{hostName}
+		<if test="ipAddr != null and ipAddr !=''">
+		AND   IP_ADDR = #{ipAddr}	   
+		</if>			
+	</update>
+</mapper>

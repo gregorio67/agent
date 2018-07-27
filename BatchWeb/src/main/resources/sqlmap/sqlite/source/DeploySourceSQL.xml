@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--=========================================================================-->
+<!-- NAME : BatchResultSQL.xml                                               -->
+<!-- DESC : Batch Job Result                                                 -->
+<!--=========================================================================-->
+<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+<!-- ==========  ============  ==============================================-->
+<!-- 2017.09.14  Gregorio Kim    Initial Creation                            -->
+<!--=========================================================================-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="deploy.source">
+	
+	<!--=========================================================================-->
+	<!-- NAME : selDeploySourceListCnt                                           -->
+	<!-- DESC : Count Deploy source      	                                     -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                              -->
+	<!--=========================================================================-->
+	<select id="selDeploySourceListCnt" parameterType="java.util.Map" resultType="java.lang.Integer">  
+		SELECT COUNT(*)
+		FROM DEPLOY_SOURCE
+		WHERE  1 = 1
+		<if test="bizName != null and bizName !=''">
+		AND BIZ_NAME = #{bizName}
+		</if>		
+		<if test="deploySource != null and soudeploySourcerceName !=''">
+		AND DEPLOY_SOURCE LIKE '%' || #{deploySource} || '%'
+		</if>
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+			AND DEPLOY_DATE >= #{fromDt}
+			AND DEPLOY_DATE <= #{toDt}
+		]]>
+		</if>
+		<if test="approveStatus != null and approveStatus != ''">
+		AND APPROVE_STATUS = #{approveStatus}
+		</if>
+		ORDER BY DEPLOY_DATE, BIZ_NAME
+	</select>	
+	
+
+	<!--=========================================================================-->
+	<!-- NAME : selDeploySourceList   	       		                                     -->
+	<!-- DESC : Retrieve Deploy source List                                      -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                              -->
+	<!--=========================================================================-->
+	<select id="selDeploySourceList" parameterType="java.util.Map" resultType="camelMap"> 
+		SELECT  DEPLOY_SOURCE_SEQ
+			   ,BIZ_NAME
+		       ,DEPLOY_DATE
+		       ,DEPLOY_PACKAGE
+		       ,DEPLOY_SOURCE
+		       ,DEPLOY_DESCRIPT
+		       ,APPROVE_STATUS
+		       ,STRFTIME('%Y-%m-%d', DATETIME(REG_DATE/1000, 'unixepoch')) REG_DATE
+		FROM DEPLOY_SOURCE
+		WHERE  1 = 1
+		<if test="bizName != null and bizName !=''">
+		AND BIZ_NAME = #{bizName}
+		</if>		
+		<if test="deploySource != null and soudeploySourcerceName !=''">
+		AND DEPLOY_SOURCE LIKE '%' || #{deploySource} || '%'
+		</if>
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+			AND DEPLOY_DATE >= #{fromDt}
+			AND DEPLOY_DATE <= #{toDt}
+		]]>
+		</if>
+		<if test="approveStatus != null and approveStatus != ''">
+		AND APPROVE_STATUS = #{approveStatus}
+		</if>
+		ORDER BY DEPLOY_DATE, BIZ_NAME
+		<include refid="Page.mysqlpageOffset" />
+	</select>		
+
+	<!--=========================================================================-->
+	<!-- NAME : selDeploySourceItem   	                                         -->
+	<!-- DESC : Retrieve deploy source item                                      -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selDeploySourceItem" parameterType="java.util.Map" resultType="camelMap"> 
+		SELECT  DEPLOY_SOURCE_SEQ
+			   ,BIZ_NAME
+		       ,DEPLOY_DATE
+		       ,DEPLOY_PACKAGE
+		       ,DEPLOY_SOURCE
+		       ,DEPLOY_DESCRIPT
+		       ,APPROVE_STATUS
+		       ,STRFTIME('%Y-%m-%d', DATETIME(REG_DATE/1000, 'unixepoch')) REG_DATE
+		FROM DEPLOY_SOURCE
+		WHERE  1 = 1
+		AND    DEPLOY_SOURCE_SEQ = ${seq}
+	</select>
+	<!--=========================================================================-->
+	<!-- NAME : insDeploySource   	       		                                 -->
+	<!-- DESC : Insert Deploy source item    			                         -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<insert id="insDeploySource" parameterType="java.util.Map">
+		INSERT INTO DEPLOY_SOURCE (
+		   DEPLOY_SOURCE_SEQ
+		  ,BIZ_NAME		   
+		  ,DEPLOY_DATE
+		  ,DEPLOY_PACKAGE
+		  ,DEPLOY_SOURCE
+		  ,DEPLOY_DESCRIPT
+		  ,APPROVE_STATUS
+		  ,USE_YN
+		  ,REG_DATE
+          ,REG_USER
+		)
+		VALUES (
+		  NULL
+		  ,#{bizName}
+		  ,#{deployDate}
+		  ,#{deployPackage}
+		  ,#{deploySource}
+		  ,#{deployDescript}
+		  ,'N'
+		  ,'Y'
+		  ,CURRENT_TIMESTAMP
+		  ,#{regUser}	
+		)
+	</insert>
+
+	<!--=========================================================================-->
+	<!-- NAME : updDeploySource   	       			                             -->
+	<!-- DESC : Update Deploy Source Item    			                         -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->	
+	<update id="updDeploySource" parameterType="java.util.Map">
+		UPDATE DEPLOY_SOURCE
+		SET 
+			REG_DATE = CURRENT_TIMESTAMP
+		  <if test="bizName != null and bizName != ''">
+		   ,BIZ_NAME = #{bizName}
+		  </if>
+		  <if test="deployDate != null and deployDate != ''">
+		  ,DEPLOY_DATE = #{deployDate}
+		  </if>
+		  <if test="deployPackage != null and deployPackage != ''">
+		  ,DEPLOY_PACKAGE = #{deployPackage}
+		  </if>
+		  <if test="deploySource != null and deploySource != ''">
+		  ,DEPLOY_SOURCE = #{deploySource}
+		  </if>
+		  <if test="deployDescript != null and deployDescript != ''">
+		  ,DEPLOY_DESCRIPT = #{deployDescript}
+		  </if>
+		  <if test="approveStatus != null and approveStatus != ''">
+		  ,APPROVE_STATUS = #{approveStatus}
+		  </if>
+		  <if test="regUser != null and regUser != ''">
+		  ,REG_USER = #{regUser}
+		  </if>
+		WHERE 1 = 1
+		AND	  DEPLOY_SOURCE_SEQ = #{seq}
+	</update>
+	<!--=========================================================================-->
+	<!-- NAME : delDeploySource   	       			                             -->
+	<!-- DESC : Delete Deploy source Item    			                         -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->		
+	<delete id="delDeploySource" parameterType="java.util.Map">
+		DELETE FROM DEPLOY_SOURCE
+		WHERE 1 = 1
+		AND	  DEPLOY_SOURCE_SEQ = #{seq} 	
+	</delete>
+</mapper>

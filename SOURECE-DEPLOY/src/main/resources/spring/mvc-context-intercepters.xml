@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:oxm="http://www.springframework.org/schema/oxm"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!--====================================================================================================
+	= Spring MVC에서 Request Filtering을 위한 Interceptor 설정
+	= 주의: 기본적으로 Interceptor설정들을 여기에 명시하지만 설정파일의 크기가 클 경우 별도 생성도 고려할 것
+	=====================================================================================================-->
+
+	<!-- interceptor 예시 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>			
+			<bean id="sessionInteceptor" class="taxris.framework.intercepter.SessionIntercepter">
+				<property name="skipUris">
+					<list>
+						<value>/batch/*</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:interceptor>
+		
+
+		<!-- Service block intercepter -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>			
+			<bean id="serviceInteceptor" class="taxris.framework.intercepter.ServiceIntercepter">
+				<property name="blockUris">
+					<list>
+						<!-- value>/sample/property.do</value>
+						<value>/sample/*</value>
+						<value>/sample/*/crypto.do</value-->
+						<value>/sample/test.do</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:interceptor>		
+
+	</mvc:interceptors>
+
+</beans>

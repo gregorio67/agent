@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+        
+<sqlMap namespace="crudMatrix">
+	<insert id="insSvcTable" parameterClass="java.util.HashMap">
+		INSERT INTO	SVC_TABLE(
+			SVC_NAME,
+			TB_NAME,
+			COMMAND
+		)
+		VALUES (
+			#svcName#,
+			#tbName#,
+			#command#
+		)
+	</insert>
+	
+	<select id="selSvcTable" resultClass="java.lang.Integer" parameterClass="java.util.HashMap">
+		SELECT COUNT(*) as cnt
+		FROM   SVC_TABLE
+		WHERE  SVC_NAME = #svcName#
+		AND    TB_NAME = #tbName#
+		AND    COMMAND = #command#
+	</select>
+	
+</sqlMap>

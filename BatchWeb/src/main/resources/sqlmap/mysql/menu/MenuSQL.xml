@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--=========================================================================-->
+<!-- NAME : BatchResultSQL.xml                                               -->
+<!-- DESC : Batch Job Result                                                 -->
+<!--=========================================================================-->
+<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+<!-- ==========  ============  ==============================================-->
+<!-- 2017.09.14  Gregorio Kim    Initial Creation 	                         -->
+<!--=========================================================================-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="web.menu">
+
+	<!--=========================================================================-->
+	<!-- NAME : selMenuList                                                      -->
+	<!-- DESC : Retrieve  All Menu                                               -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selActiveMenuList" parameterType="java.util.Map" resultType="camelMap">
+		SELECT  MENU_ID
+		       ,UPPER_MENU_ID
+		       <choose>
+		   		<when test="locale == 'en'">
+			       ,MENU_NAME_EN AS MENU_NAME
+		   		</when>
+		   		<otherwise>
+			       ,MENU_NAME AS MENU_NAME	   		
+		   		</otherwise>
+		       </choose>
+		       ,MENU_ACTION
+		       ,MENU_DESCRIPTION
+		       ,USE_YN
+		       ,REG_USER
+		       ,REG_DATE
+		FROM MENU_LIST
+		WHERE 1 = 1
+		AND USE_YN = 'Y'
+		AND MENU_ID IN (
+			SELECT MENU_ID 
+			FROM USER_ROLE 
+			WHERE  1 = 1
+			AND    USE_YN = 'Y' 
+			AND    ROLE_ID = #{roleId}
+		)
+		ORDER BY MENU_ID
+	</select>
+	
+	<!--=========================================================================-->
+	<!-- NAME : selMenuList                                                      -->
+	<!-- DESC : Retrieve  All Menu                                               -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selMenuList" parameterType="hashmap" resultType="camelMap">
+		SELECT  MENU_ID
+		       ,UPPER_MENU_ID
+		       <choose>
+		   		<when test="locale='en'">
+			       ,MENU_NAME_EN AS MENU_NAME
+		   		</when>
+		   		<otherwise>
+			       ,MENU_NAME AS MENU_NAME	   		
+		   		</otherwise>
+		       </choose>
+		       ,MENU_ACTION
+		       ,MENU_DESCRIPTION
+		       ,USE_YN
+		       ,REG_USER
+		       ,REG_DATE
+		FROM MENU_LIST
+		WHERE 1 = 1
+		<if test="menuName != null and menuName != ''">
+		AND MENU_NAME = #{menuName}
+		</if>		<if test="useYn !=null and useYn !=''">
+		AND USE_YN = #{useYn}
+		</if>
+		ORDER BY MENU_ID;	
+	</select>
+	
+	<!--=========================================================================-->
+	<!-- NAME : selStepHist                                                      -->
+	<!-- DESC : Retrieve  Step History from spring batch framework               -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selMenuItem" parameterType="hashmap" resultType="camelMap">
+		SELECT  MENU_ID
+		       ,UPPER_MENU_ID
+		       <choose>
+		   		<when test="locale='en'">
+			       ,MENU_NAME_EN AS MENU_NAME
+		   		</when>
+		   		<otherwise>
+			       ,MENU_NAME AS MENU_NAME		   		
+		   		</otherwise>
+		       </choose>
+		       ,MENU_ACTION
+		       ,MENU_DESCRIPTION
+		       ,USE_YN
+		       ,REG_USER
+		       ,REG_DATE
+		FROM MENU_LIST
+		WHERE 1 = 1
+		<if test="menuid != null and menuid != ''">
+		AND MENU_ID = #{menuId}
+		</if>
+		<if test="menuName != null and menuName != ''">
+		AND MENU_NAME = #{menuName}
+		</if>
+		ORDER BY MENU_ID;	
+	</select>
+	<!--=========================================================================-->
+	<!-- NAME : insMenu                                                  	    -->
+	<!-- DESC : Insert Menu											             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->	
+	<insert id="insMenu" parameterType="java.util.Map">
+		INSERT INTO MENU_LIST (
+			 MENU_ID
+			,UPPER_MENU_ID
+			,MENU_NAME
+			,MENU_NAME_EN
+			,MENU_ACTION
+			,MENU_DESCRIPTION
+			,USE_YN
+			,REG_USER
+			,REG_DATE
+		)
+		VALUES (
+			 #{menuId}
+		 	,#{menuUpperId}
+		 	,#{menuName}
+		 	,#{menuNameEn}
+		 	,#{menuAction}
+		 	,#{menuDescription}
+		 	,#{useYn}
+		 	,#{regUser}
+		 	,NOW() 
+		)	
+	</insert>
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"   
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    					http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"> 
+    
+    
+	<bean id="quartzHelper" class="batch.web.quartz.QuartzHelper" init-method="init" destroy-method="shutdown">
+		<property name="jobListener" ref="singleJobListener" />
+		<property name="scheduler" ref="scheduler" />
+	</bean>
+	
+	<bean id="singleJobListener" class="batch.web.quartz.SingleJobListener" />
+	
+	<bean id="scheduler" class="batch.web.quartz.BaseScheduler">
+		<property name="propertyLocation" value="properties/quartz.properties" />
+	</bean>
+	
+	<!-- WAS is loaded, all job are registered in cron job scheduler -->
+	<!-- bean id="registerCron" class="batch.web.service.cron.CronRegisterSvc" init-method="registerCronSchedule" destroy-method="shutdownCronSchedule" /-->
+	
+</beans>
+

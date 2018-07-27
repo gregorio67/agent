@@ -1,0 +1,2 @@
+rem java -Dmybatis-config=C:\STIS\workspace\SQL_PARSER\mybatis_conf.xml -jar sqlParser.jar C:/STIS/workspace/STIS-SB/src/main/resources/sqlmap
+java  -Xms1024m -Xmx1024m -jar sqlParser.jar parser ibatis C:\STIS\workspace\SQL_PARSER\ibatis_conf.xml  D:\temp\nexaotsbiis\workspace\egovframework.biis\src\main\resources\biis\sqlmap

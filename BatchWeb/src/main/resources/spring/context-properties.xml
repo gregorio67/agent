@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+	  
+
+	<bean id="app" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location" value="classpath:properties/app.properties" />
+	</bean>
+
+	<bean id="system" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location" value="classpath:properties/system.properties" />
+	</bean>
+	
+	<!-- system.properties, common.properties의 모든 항목을 Load  -->
+	<!-- 응용에서는 Property의 설정값을 가지고 오기 위해 PropertiesUtil을 사용함 -->
+	<bean id="PropertiesUtil" class="batch.web.util.PropertiesUtil">
+  		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+  		<property name="locations">
+  			<list>
+  				<value>classpath:properties/system.properties</value>
+  				<value>classpath:properties/app.properties</value>  				
+  			</list>
+  		</property>
+  	</bean>	
+</beans>	

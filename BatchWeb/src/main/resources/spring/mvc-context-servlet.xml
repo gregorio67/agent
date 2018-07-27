@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:task="http://www.springframework.org/schema/task"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:mvc="http://www.springframework.org/schema/mvc"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+                http://www.springframework.org/schema/task	http://www.springframework.org/schema/task/spring-task-4.0.xsd
+                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+	<!-- mvc:annotation-driven /--> 
+    <context:component-scan base-package="batch.web">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+    </context:component-scan>
+
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	<mvc:resources mapping="/js/**" location="/js/" />
+	<mvc:resources mapping="/css/**" location="/css/" />
+
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+ 		<property name="messageConverters">
+ 			<list>
+ 				<ref bean="jsonMessageConverter" />
+ 			</list>
+ 		</property> 
+    </bean>	
+
+	<bean id="jsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>application/json;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+	
+	
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping">
+        <property name="interceptors">
+            <list>
+                <ref bean="localeChangeInterceptor" />
+                <ref bean="sessionInteceptor" />
+            </list>
+        </property>
+    </bean>
+	
+	    
+    <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />
+    
+    <!-- 쿠키를 이용한 Locale 이용시 <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"/> -->
+    <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+        <property name="paramName" value="locale" />
+    </bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="268435456"/>
+	</bean>
+		
+	<!-- Exception Resolver -->
+	<bean id="exceptionResolver" class="batch.web.exception.JsonExceptionResolver">
+		<property name="maxLength" value="1000" />
+	</bean>
+
+	<!-- Setting Bean name Resolver -->
+	<!-- Bean name resolver should be set that order have priority than url based view resolver  -->
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver"> 
+		<property name="order" value="3" />
+	</bean>
+		
+	<!-- Set XML View Resolver -->
+	<bean class="org.springframework.web.servlet.view.XmlViewResolver">
+		<property name="location" value="classpath:spring/context-views.xml"/>
+		<property name="order" value="1" />
+	</bean>	
+
+    <bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+    	<property name="order" value="2" />
+    	<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+    	<property name="prefix" value="/WEB-INF/jsp/" />
+    	<property name="suffix" value=".jsp" />
+    </bean>
+    		
+	<!-- Set the login check, block service and authorization for menu -->
+	<bean id="sessionInteceptor" class="batch.web.interceptor.SessionInterceptor">
+		<property name="skipUris">
+			<list>
+				<value>/login/*</value>
+				<value>/user/*</value>
+				<value>/job/*</value>				
+				<value>/main/mainpage.do</value>
+				<value>/user/userRegister.do</value>
+				<value>/user/insertUser</value>
+				<value>/user/resetPassword</value>
+				<value>/job/resentJobResult</value>
+				<value>/cmn/localeChange.do</value>
+				<value>/*</value>
+				<!-- value>/main/*</value>
+				<value>/menu/*</value>
+				<value>/user/*</value-->
+			</list>
+		</property>
+		<property name="sessionVo" ref="sessionVo" />
+		<property name="loginURI" value="/main/mainpage.do" />
+		<!-- The beans are configured in context-beans.xml file  -->
+		<!-- This is blocking service  -->
+		<!-- property name="blockServiceName" value="blockService" /-->
+		<!-- This is checking for unauthorized url -->
+		<!-- property name="authCheckServiceName" value="authCheckService" /-->
+	</bean>
+
+	<!-- Session Value Object -->
+	<!-- The session should be different according to biz -->	
+	<bean id="sessionVo" class="batch.web.vo.SessionVo" /> 
+        
+</beans>

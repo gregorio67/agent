@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--=========================================================================-->
+<!-- NAME : BatchResultSQL.xml                                               -->
+<!-- DESC : Batch Job Result                                                 -->
+<!--=========================================================================-->
+<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+<!-- ==========  ============  ==============================================-->
+<!-- 2017.09.14  Greoorio Kim    Initial Creation                            -->
+<!--=========================================================================-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="web.jobHist">
+	
+	<!--=========================================================================-->
+	<!-- NAME : selJobHist                                                       -->
+	<!-- DESC : Retrieve  Job History from spring batch framework                -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selJobHistCount" parameterType="hashmap" resultType="java.lang.Integer">
+		SELECT COUNT(*) AS CNT
+		FROM BATCH_JOB_INSTANCE A,
+		     BATCH_JOB_EXECUTION B,
+		     (SELECT JOB_EXECUTION_ID,
+		             LISTAGG(KEY_NAME || ':' || STRING_VAL, ',') WITHIN GROUP (ORDER BY JOB_EXECUTION_ID) JOB_PARAM
+		      FROM BATCH_JOB_EXECUTION_PARAMS
+		      GROUP BY JOB_EXECUTION_ID) C,
+		      BATCH_JOB_LIST D
+		WHERE 1 = 1
+		AND   A.JOB_INSTANCE_ID = B.JOB_INSTANCE_ID
+		AND   B.JOB_EXECUTION_ID = C.JOB_EXECUTION_ID
+		AND   A.JOB_NAME= D.JOB_NAME
+		<if test="regUser != null and regUser !=''">
+		AND   D.REG_USER =  #{regUser} 
+		</if> 
+		<if test="jobName != null and jobName !=''">
+		AND   A.JOB_NAME LIKE '%' || #{jobName} || '%'
+		</if> 
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+		AND   TRUNC(B.START_TIME) >= TO_DATE(#{fromDt}, 'YYYY-MM-DD')
+		]]>
+		</if>
+		<if test="toDt != null and toDt != ''">
+		<![CDATA[
+		AND   TRUNC(B.START_TIME) <= TO_DATE(#{toDt}, 'YYYY-MM-DD')
+		]]>
+		</if>
+
+		ORDER BY B.START_TIME DESC,  A.JOB_NAME 
+
+	</select>	
+	<!--=========================================================================-->
+	<!-- NAME : selJobHist                                                       -->
+	<!-- DESC : Retrieve  Job History from spring batch framework                -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selJobHist" parameterType="hashmap" resultType="camelMap">
+		<include refid="Page.pageHeader" />
+		SELECT 
+		    A.JOB_INSTANCE_ID, 
+		    A.JOB_NAME, 
+		    B.JOB_EXECUTION_ID, 
+		    TO_CHAR(B.START_TIME, 'YYYY-MM-DD:HH24:MI:SS') JOB_START_TIME, 
+		    TO_CHAR(B.END_TIME, 'YYYY-MM-DD:HH24:MI:SS') JOB_END_TIME, 
+		    B.STATUS JOB_STATUS,
+		    C.JOB_PARAM
+		FROM  BATCH_JOB_INSTANCE A
+		     ,BATCH_JOB_EXECUTION B
+		     ,(SELECT JOB_EXECUTION_ID,
+		             LISTAGG(KEY_NAME || ':' ||  TO_CHAR(STRING_VAL), ',') WITHIN GROUP (ORDER BY JOB_EXECUTION_ID) JOB_PARAM
+		       FROM BATCH_JOB_EXECUTION_PARAMS
+		       GROUP BY JOB_EXECUTION_ID) C
+		      ,BATCH_JOB_LIST D
+		WHERE 1 = 1
+		AND   A.JOB_INSTANCE_ID = B.JOB_INSTANCE_ID
+		AND   B.JOB_EXECUTION_ID = C.JOB_EXECUTION_ID
+		AND   A.JOB_NAME= D.JOB_NAME
+		<if test="regUser != null and regUser !=''">
+		AND   D.REG_USER =  #{regUser} 
+		</if> 
+		<if test="jobName != null and jobName !=''">
+		AND   A.JOB_NAME LIKE '%' || #{jobName} || '%'
+		</if> 
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+		AND   TRUNC(B.START_TIME) >= TO_DATE(#{fromDt}, 'YYYY-MM-DD')
+		]]>
+		</if>
+		<if test="toDt != null and toDt != ''">
+		<![CDATA[
+		AND   TRUNC(B.START_TIME) <= TO_DATE(#{toDt}, 'YYYY-MM-DD')
+		]]>
+		</if>
+		ORDER BY B.START_TIME DESC,  A.JOB_NAME 
+		<include refid="Page.pageFooter" />
+	</select>
+	
+	<!--=========================================================================-->
+	<!-- NAME : selUserJobHistCount                                              -->
+	<!-- DESC : Retrieve  User Job History from spring batch framework           -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->	
+	<select id="selUserJobHistCount" parameterType="hashmap" resultType="java.lang.Integer">
+		SELECT COUNT(*) AS CNT
+		FROM BATCH_JOB_INSTANCE A,
+		     BATCH_JOB_EXECUTION B,
+		     (SELECT JOB_EXECUTION_ID,
+		             LISTAGG(KEY_NAME || ':' || STRING_VAL, ',') WITHIN GROUP (ORDER BY JOB_EXECUTION_ID) JOB_PARAM
+		      FROM BATCH_JOB_EXECUTION_PARAMS
+		      GROUP BY JOB_EXECUTION_ID) C,
+		      BATCH_JOB_LIST D
+		WHERE 1 = 1
+		AND   A.JOB_INSTANCE_ID = B.JOB_INSTANCE_ID
+		AND   B.JOB_EXECUTION_ID = C.JOB_EXECUTION_ID
+		AND   A.JOB_NAME = D.JOB_NAME
+		AND   D.REG_USER = #{regUser}
+		<if test="jobName != null and jobName !=''">
+		AND   A.JOB_NAME LIKE '%' || #{jobName} || '%'
+		</if> 
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+		AND   TRUNC(B.START_TIME) >= TO_DATE(#{fromDt}, 'YYYY-MM-DD')
+		]]>
+		</if>
+		<if test="toDt != null and toDt != ''">
+		<![CDATA[
+		AND   TRUNC(B.START_TIME) <= TO_DATE(#{toDt}, 'YYYY-MM-DD')
+		]]>
+		</if>
+		ORDER BY B.START_TIME DESC,  A.JOB_NAME 
+
+	</select>
+	
+	<!--=========================================================================-->
+	<!-- NAME : selJobHist                                                       -->
+	<!-- DESC : Retrieve  Job History from spring batch framework                -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selUserJobHist" parameterType="hashmap" resultType="camelMap">
+		<include refid="Page.pageHeader" />
+		SELECT 
+		    A.JOB_INSTANCE_ID, 
+		    A.JOB_NAME, 
+		    B.JOB_EXECUTION_ID, 
+		    TO_CHAR(B.START_TIME, 'YYYY-MM-DD:HH24:MI:SS') JOB_START_TIME, 
+		    TO_CHAR(B.END_TIME, 'YYYY-MM-DD:HH24:MI:SS') JOB_END_TIME, 
+		    B.STATUS JOB_STATUS,
+		    C.JOB_PARAM
+		FROM BATCH_JOB_INSTANCE A,
+		     BATCH_JOB_EXECUTION B,
+		     (SELECT JOB_EXECUTION_ID,
+		             LISTAGG(KEY_NAME || ':' ||  TO_CHAR(STRING_VAL), ',') WITHIN GROUP (ORDER BY JOB_EXECUTION_ID) JOB_PARAM
+		      FROM BATCH_JOB_EXECUTION_PARAMS
+		      GROUP BY JOB_EXECUTION_ID) C,
+		      BATCH_JOB_LIST D
+		WHERE 1 = 1
+		AND   A.JOB_INSTANCE_ID = B.JOB_INSTANCE_ID
+		AND   B.JOB_EXECUTION_ID = C.JOB_EXECUTION_ID
+		AND   A.JOB_NAME = D.JOB_NAME
+		AND   D.REG_USER = #{regUser}
+		<if test="jobName != null and jobName !=''">
+		AND   A.JOB_NAME LIKE '%' || #{jobName} || '%'
+		</if> 
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+		AND   TRUNC(B.START_TIME) >= TO_DATE(#{fromDt}, 'YYYY-MM-DD')
+		]]>
+		</if>
+		<if test="toDt != null and toDt != ''">
+		<![CDATA[
+		AND   TRUNC(B.START_TIME) <= TO_DATE(#{toDt}, 'YYYY-MM-DD')
+		]]>
+		</if>
+
+		ORDER BY B.START_TIME DESC,  A.JOB_NAME 
+		<include refid="Page.pageFooter" />
+	</select>	
+	<!--=========================================================================-->
+	<!-- NAME : selStepHist                                                      -->
+	<!-- DESC : Retrieve  Step History from spring batch framework               -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selStepHist" parameterType="hashmap" resultType="camelMap">
+		SELECT B.STEP_NAME,
+		       TO_CHAR(B.START_TIME, 'YYYY-MM-DD:HH24:MI:SS') STEP_START_TIME,
+		       TO_CHAR(B.END_TIME, 'YYYY-MM-DD:HH24:MI:SS') STEP_END_TIME,
+		       B.STATUS,
+		       B.READ_COUNT,
+		       B.WRITE_COUNT,
+		       B.EXIT_CODE,
+		       B.EXIT_MESSAGE
+		FROM   BATCH_JOB_EXECUTION A,
+		       BATCH_STEP_EXECUTION B  
+		WHERE  1 = 1
+		AND    A.JOB_EXECUTION_ID = B.JOB_EXECUTION_ID
+		AND    A.JOB_EXECUTION_ID = #{jobExecutionId}
+		ORDER BY B.START_TIME
+
+	</select>
+	<!--=========================================================================-->
+	<!-- NAME : selRecentJobHist                                                 -->
+	<!-- DESC : Retrieve  Recent Job Result							             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->	
+	<select id="selRecentJobHist" parameterType="hashmap" resultType="camelMap">
+		SELECT * 
+		FROM (
+		     SELECT  A.JOB_INSTANCE_ID 
+		            ,A.JOB_NAME 
+		            ,B.JOB_EXECUTION_ID 
+		            ,B.START_TIME JOB_START_TIME
+		            ,B.END_TIME JOB_END_TIME
+		            ,B.STATUS JOB_STATUS
+		      FROM BATCH_JOB_INSTANCE A,
+		           BATCH_JOB_EXECUTION B
+		      WHERE 1 = 1
+		      AND   A.JOB_INSTANCE_ID = B.JOB_INSTANCE_ID
+		      ORDER BY B.END_TIME DESC) RESCENT_JOB
+		 <choose>
+		 	<when test="dbtype != 'oracle'">
+			LIMIT 10
+		 	</when>
+		 	<otherwise>
+			 <![CDATA[
+			 WHERE ROWNUM <= 10
+			 ]]>
+		 	</otherwise>
+		 </choose>     
+	</select>
+</mapper>

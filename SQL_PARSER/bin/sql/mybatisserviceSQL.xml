@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org/DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="crudMatrix">
+	<insert id="insSvcTable" parameterType="java.util.HashMap">
+		INSERT INTO	SVC_TABLE(
+			SVC_NAME,
+			TB_NAME,
+			COMMAND
+		)
+		VALUES (
+			#{svcName},
+			#{tbName},
+			#{command}
+		)
+	</insert>
+	
+	<select id="selSvcTable" resultType="java.lang.Integer" parameterType="java.util.HashMap">
+		SELECT COUNT(*) as cnt
+		FROM   SVC_TABLE
+		WHERE  SVC_NAME = #{svcName}
+		AND    TB_NAME = #{tbName}
+		AND    COMMAND = #{command}
+	</select>
+	
+</mapper>

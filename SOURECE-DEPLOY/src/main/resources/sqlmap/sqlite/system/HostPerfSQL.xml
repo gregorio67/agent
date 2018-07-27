@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--=========================================================================-->
+<!-- NAME : BatchResultSQL.xml                                               -->
+<!-- DESC : Batch Job Result                                                 -->
+<!--=========================================================================-->
+<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+<!-- ==========  ============  ==============================================-->
+<!-- 2017.09.14  Gregorio Kim    Initial Creation 	                         -->
+<!--=========================================================================-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="host.perf">
+
+
+	<!--=========================================================================-->
+	<!-- NAME : selCpuInfoItem                                                   -->
+	<!-- DESC : Retrieve  HOST Information                                       -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selCpuInfoListCnt" parameterType="hashmap" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM   CPU_INFO
+		WHERE 1 = 1
+		AND   HOST_NAME =  #{hostName}
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+			AND UPD_DATE >= #{fromDt}
+			AND UPD_DATE <= #{toDt}
+		]]>
+		</if>	
+		ORDER BY  UPD_DATE DESC
+	</select>
+
+	<!--=========================================================================-->
+	<!-- NAME : selCpuInfoItem                                                   -->
+	<!-- DESC : Retrieve  HOST Information                                       -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selCpuInfoList" parameterType="hashmap" resultType="camelMap">
+		SELECT 
+		    	HOST_NAME,
+		    	UPD_DATE,
+		    	CPU_USED,
+		    	CPU_FREE,
+		    	SYS_CPU,
+		    	USER_CPU    
+		FROM  CPU_INFO
+		WHERE 1 = 1
+		AND   HOST_NAME =  #{hostName}
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+			AND UPD_DATE >= #{fromDt}
+			AND UPD_DATE <= #{toDt}
+		]]>
+		</if>	
+		ORDER BY  UPD_DATE DESC
+		<include refid="Page.mysqlpageOffset" />
+	</select>
+
+	<!--=========================================================================-->
+	<!-- NAME : selCpuHostList                                                   -->
+	<!-- DESC : Retrieve  HOST Information                                       -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selCpuHostList" parameterType="hashmap" resultType="java.lang.String">
+		SELECT DISTINCT(HOST_NAME)
+		FROM   CPU_INFO
+		WHERE  HOST_NAME LIKE '%' || #{hostName} || '%'
+	</select>
+	
+	<!--=========================================================================-->
+	<!-- NAME : selCpuInfoItem                                                   -->
+	<!-- DESC : Retrieve  HOST Information                                       -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selCpuInfoChartList" parameterType="hashmap" resultType="camelMap">
+		SELECT 
+		    	HOST_NAME,
+		    	UPD_DATE,
+		    	CPU_USED,
+		    	CPU_FREE,
+		    	SYS_CPU,
+		    	USER_CPU    
+		FROM  CPU_INFO
+		WHERE 1 = 1
+		AND   HOST_NAME =  #{hostName}
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+			AND UPD_DATE >= #{fromDt}
+			AND UPD_DATE <= #{toDt}
+		]]>
+		</if>	
+		ORDER BY  UPD_DATE DESC
+	</select>
+	<!--=========================================================================-->
+	<!-- NAME : insCpuInfo                                                  	    -->
+	<!-- DESC : Insert Menu											             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->	
+	<insert id="insCpuInfo" parameterType="java.util.Map">
+		INSERT INTO CPU_INFO (
+	 		 	 SEQ
+				,HOST_NAME     
+				,UPD_DATE       
+				,CPU_USED  
+				,CPU_FREE  
+				,SYS_CPU  
+				,USER_CPU  
+		)
+		VALUES (
+		     null
+			,#{hostName}
+		 	,#{updDate}
+		 	,#{cpuUsed}
+		 	,#{cpuFree}
+		 	,#{sysCpu}
+		 	,#{userCpu}
+		)	
+	</insert>
+
+	<!--=========================================================================-->
+	<!-- NAME : selCpuInfoItem                                                   -->
+	<!-- DESC : Retrieve  HOST Information                                       -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selMemInfoListCnt" parameterType="hashmap" resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM  MEM_INFO
+		WHERE 1 = 1
+		AND   HOST_NAME =  #{hostName}
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+			AND UPD_DATE >= #{fromDt}
+			AND UPD_DATE <= #{toDt}
+		]]>
+		</if>	
+		ORDER BY  UPD_DATE DESC
+	</select>
+	
+	<!--=========================================================================-->
+	<!-- NAME : selMemHostList                                                   -->
+	<!-- DESC : Retrieve  HOST Information                                       -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selMemHostList" parameterType="hashmap" resultType="java.lang.String">
+		SELECT DISTINCT(HOST_NAME)
+		FROM   MEM_INFO
+		WHERE  HOST_NAME LIKE '%' || #{hostName} || '%'
+	</select>
+	
+	<!--=========================================================================-->
+	<!-- NAME : selCpuInfoItem                                                   -->
+	<!-- DESC : Retrieve  HOST Information                                       -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selMemInfoList" parameterType="hashmap" resultType="camelMap">
+		SELECT 
+		    	 HOST_NAME
+		        ,UPD_DATE
+		    	,ROUND((MEM_TOTAL / 1024 / 1024)) MEM_TOTAL
+		    	,ROUND((MEM_FREE / 1024 / 1024)) MEM_FREE
+		    	,ROUND((MEM_USED / 1024 / 1024)) MEM_USED
+		    	,MEM_RATE    
+		    	,ROUND((PAGE_IN / 1024 )) PAGE_IN
+		    	,ROUND((PAGE_OUT / 1024)) PAGE_OUT
+		    	,ROUND((SWAP_TOTAL / 1024 / 1024)) SWAP_TOTAL
+		    	,ROUND((SWAP_USED  / 1024 / 1024))  SWAP_USED
+		    	,SWAP_RATE
+		FROM  MEM_INFO
+		WHERE 1 = 1
+		AND   HOST_NAME =  #{hostName}
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+			AND UPD_DATE >= #{fromDt}
+			AND UPD_DATE <= #{toDt}
+		]]>
+		</if>	
+		ORDER BY  UPD_DATE DESC
+		<include refid="Page.mysqlpageOffset" />
+	</select>
+	<!--=========================================================================-->
+	<!-- NAME : selCpuInfoItem                                                   -->
+	<!-- DESC : Retrieve  HOST Information                                       -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selMemInfoChartList" parameterType="hashmap" resultType="camelMap">
+		SELECT 
+		    	 HOST_NAME
+		        ,UPD_DATE
+		    	,ROUND((MEM_TOTAL / 1024 / 1024)) MEM_TOTAL
+		    	,ROUND((MEM_FREE / 1024 / 1024)) MEM_FREE
+		    	,ROUND((MEM_USED / 1024 / 1024)) MEM_USED
+		    	,MEM_RATE    
+		    	,ROUND((PAGE_IN / 1024 )) PAGE_IN
+		    	,ROUND((PAGE_OUT / 1024)) PAGE_OUT
+		    	,ROUND((SWAP_TOTAL / 1024 / 1024)) SWAP_TOTAL
+		    	,ROUND((SWAP_USED  / 1024 / 1024))  SWAP_USED
+		    	,SWAP_RATE
+		FROM  MEM_INFO
+		WHERE 1 = 1
+		AND   HOST_NAME =  #{hostName}
+		<if test="fromDt != null and fromDt != ''">
+		<![CDATA[
+			AND UPD_DATE >= #{fromDt}
+			AND UPD_DATE <= #{toDt}
+		]]>
+		</if>	
+		ORDER BY  UPD_DATE
+	</select>
+	<!--=========================================================================-->
+	<!-- NAME : insCpuInfo                                                  	    -->
+	<!-- DESC : Insert Menu											             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->	
+	<insert id="insMemInfo" parameterType="java.util.Map">
+		INSERT INTO MEM_INFO (
+	 		 	 SEQ
+				,HOST_NAME     
+				,UPD_DATE       
+		    	,MEM_TOTAL
+		    	,MEM_FREE
+		    	,MEM_USED
+		    	,MEM_RATE    
+		    	,PAGE_IN
+		    	,PAGE_OUT
+		    	,SWAP_TOTAL
+		    	,SWAP_USED   
+		    	,SWAP_RATE
+		)
+		VALUES (
+		     null
+			,#{hostName}
+		 	,#{updDate}
+		 	,#{memTotal}
+		 	,#{memFree}
+		 	,#{memUsed}
+		 	,#{memRate}
+		 	,#{pageIn}
+		 	,#{pageOut}
+		 	,#{swapTotal}
+		 	,#{swapUsed}
+		 	,#{swapRate}
+		)	
+	</insert>	
+</mapper>

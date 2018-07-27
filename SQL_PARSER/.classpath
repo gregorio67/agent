@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="C:/STIS/bin/maven/gsp.jar"/>
+	<classpathentry kind="lib" path="C:/STIS/bin/maven/repository/commons-io/commons-io/2.5/commons-io-2.5.jar"/>
+	<classpathentry kind="lib" path="C:/STIS/bin/maven/jsqlparser-0.9.5.jar"/>
+	<classpathentry kind="lib" path="C:/STIS/bin/maven/mybatis-3.4.4.jar"/>
+	<classpathentry kind="lib" path="C:/STIS/bin/maven/ojdbc8.jar"/>
+	<classpathentry kind="lib" path="C:/STIS/bin/maven/cmn-util-0.3.8.jar"/>
+	<classpathentry kind="lib" path="C:/STIS/bin/maven/commons-collections-3.2.2.jar"/>
+	<classpathentry kind="lib" path="C:/STIS/bin/maven/ibatis-sqlmap-2.3.4.726.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

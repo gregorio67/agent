@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- DataSource: 로컬 전용(for Tomcat7) DB 연동 정보 설정 -->
+<!-- 주의: 로컬환경에서만 유지하고 서버환경에서는 배포예외로 처리한다
+		 실제 Maven WAR Plugin 설정에서는 해당 파일을 패키징에서 예외처리 하고있다. -->
+<Context reloadable="true" antiResourceLocking="false" privileged="true" disableURLRewriting="true">
+	<!-- Resource 이름과 Spring Framework의 Datasource 설정(system.properties파일의 'jndi.datasource.name')간 일치에 주의한다. -->
+	<!-- Resource name="batchweb" auth="Container" type="javax.sql.DataSource"
+	   		username="lots_main"
+			password="lotsmain!2016"
+			maxWait="10000"
+			initialSize="1"
+			maxActive="3"
+			defaultAutoCommit="false"
+			testOnBorrow="true"
+			validationQuery="SELECT 1 FROM DUAL"
+			testWhileIdle="true"
+			minEvictableIdleTimeMillis="55000"
+			timeBetweenEvictionRunsMillis="34000"
+			driverClassName="oracle.jdbc.OracleDriver"
+			url="jdbc:oracle:thin:@172.6.14.212:1521:TCS" /-->
+	<!-- Mysql Data source -->		
+	<!-- Resource name="batchweb" auth="Container" type="javax.sql.DataSource"
+	   		username="admin"
+			password="test12345"
+			maxWait="10000"
+			initialSize="1"
+			maxActive="3"
+			defaultAutoCommit="false"
+			testOnBorrow="true"
+			validationQuery="SELECT 1 FROM DUAL"
+			testWhileIdle="true"
+			minEvictableIdleTimeMillis="55000"
+			timeBetweenEvictionRunsMillis="34000"
+			driverClassName="com.mysql.jdbc.Driver"
+			url="jdbc:mysql://testdb.cxylu99sf4go.ap-northeast-2.rds.amazonaws.com:3306/testdb" /-->
+	<!-- SQLITE3 DATA Source  -->		
+	<Resource name="batchweb"
+			  auth="Container"
+			  type="javax.sql.DataSource"
+			  driverClassName="org.sqlite.JDBC"
+			  url="jdbc:sqlite:D:/sqlite3/BATCHWEB.db"
+			  maxActive="2"
+			  minIdle="2"
+			  maxIdle="2"
+			  maxWait="1000" />			
+			
+</Context>

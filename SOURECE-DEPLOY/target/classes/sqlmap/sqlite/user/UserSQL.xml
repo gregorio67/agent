@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--=========================================================================-->
+<!-- NAME : BatchResultSQL.xml                                               -->
+<!-- DESC : Batch Job Result                                                 -->
+<!--=========================================================================-->
+<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+<!-- ==========  ============  ==============================================-->
+<!-- 2017.09.14  Gregorio Kim    Initial Creation                            -->
+<!--=========================================================================-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="web.user">
+
+	<!--=========================================================================-->
+	<!-- NAME : selMenuList                                                      -->
+	<!-- DESC : Retrieve  All Menu                                               -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selActiveUserList" parameterType="java.util.Map" resultType="camelMap">
+		SELECT  USER_ID
+		       ,USER_NAME
+		       ,USER_ROLE
+		       ,USE_YN
+		       ,REG_USER
+		       ,REG_DATE
+		FROM USER_INFO
+		WHERE 1 = 1
+		AND USE_YN = 'Y'
+		ORDER BY USER_NAME
+	</select>
+	
+	<!--=========================================================================-->
+	<!-- NAME : selMenuList                                                      -->
+	<!-- DESC : Retrieve  All Menu                                               -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selUserList" parameterType="hashmap" resultType="camelMap">
+		SELECT  USER_ID
+		       ,USER_NAME
+		       ,USER_ROLE
+		       ,USE_YN
+		       ,REG_USER
+		       ,REG_DATE
+		FROM MENU_LIST
+		WHERE 1 = 1
+		<if test="userId != null and userId != ''">
+		AND USER_ID = #{userId}
+		</if>		
+		<if test="useName !=null and useName !=''">
+		AND USER_NAME = #{userName}
+		</if>
+		<if test="useYn !=null and useYn !=''">
+		AND USE_YN = #{useYn}
+		</if>
+		ORDER BY USER_ID
+	</select>
+	
+	<!--=========================================================================-->
+	<!-- NAME : selStepHist                                                      -->
+	<!-- DESC : Retrieve  Step History from spring batch framework               -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selUserItem" parameterType="hashmap" resultType="camelMap">
+		SELECT  USER_ID
+		       ,USER_NAME
+		       ,USER_PASSWORD
+		       ,USER_ROLE
+		       ,USE_YN
+		       ,REG_USER
+		FROM USER_INFO
+		WHERE 1 = 1
+		AND USER_ID = #{userId}
+		AND USE_YN = 'Y'
+	</select>
+	
+	<insert id="insUser" parameterType="java.util.Map">
+		INSERT INTO USER_INFO (
+			    USER_ID
+		       ,USER_NAME
+		       ,USER_PASSWORD
+		       ,USER_ROLE		       
+		       ,USE_YN
+		       ,REG_USER
+		       ,REG_DATE
+		)
+		VALUES (
+			 #{userId}
+		 	,#{userName}
+		 	,#{userPassword}
+		 	,#{userRole}
+		 	,#{useYn}
+		 	,#{regUser}
+		 	,CURRENT_TIMESTAMP 
+		)	
+	</insert>
+
+	<!--=========================================================================-->
+	<!-- NAME : updUser             	                                         -->
+	<!-- DESC : Update User 		                                             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->	
+	<update id="updUser" parameterType="java.util.Map">
+		UPDATE USER_INFO 
+		SET  
+			REG_DATE = CURRENT_TIMESTAMP  
+		<if test="userName != null and userName !=''">
+			,USER_NAME = #{userName}
+		</if>
+		<if test="userPassword != null and userPassword !=''">
+			,USER_PASSWORD = #{userPassword}
+		</if>
+		<if test="userRole != null and userRole !=''">
+			,USER_ROLE = #{userRole}
+		</if>
+		<if test="userName != null and userName !=''">
+			,USE_YN = #{useYn}
+		</if>
+		<if test="regUser != null and regUser !=''">
+			,REG_USER = #{regUser}
+		</if>
+		
+		WHERE 1 = 1
+		AND USER_ID = #{userId} 
+	</update>
+
+	<!--=========================================================================-->
+	<!-- NAME : updPassword            	                                         -->
+	<!-- DESC : Update User Password                                             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<update id="updPassword" parameterType="java.util.Map">
+		UPDATE USER_INFO 
+		SET    
+			 REG_DATE = CURRENT_TIMESTAMP
+			,USER_PASSWORD = #{userPassword}	
+			<if test="regUser != null and regUser !=''">
+			,REG_USER = #{regUser}
+			</if>
+		WHERE 1 = 1
+		AND USER_ID = #{userId} 
+	</update>	
+
+	<!--=========================================================================-->
+	<!-- NAME : delUser            		                                         -->
+	<!-- DESC : Delete User			                                             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<delete id="delUser" parameterType="java.util.Map">
+		DELETE FROM USER_INFO
+		WHERE 1 = 1
+		AND USER_ID = #{userId}
+	</delete>	
+</mapper>

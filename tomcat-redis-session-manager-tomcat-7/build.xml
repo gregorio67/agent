@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<project name="tomcat-redis" default="main" basedir=".">
+    <description>
+        Description of your project
+    </description>
+ 
+	<property name='lib.dir' value='C:/STIS/bin/lib/session'/>
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+	</path>
+	
+	<property name="projectName" value="tomcat-redis-session" />  
+	 
+	<!--Staging Directory --> 
+	<property name="staging.dir" location="staging" />
+	 
+	<!-- Java sources -->
+	<property name="src.dir" location="src" />
+	 
+	<!-- Java classes -->
+	<property name="build.dir" location="${staging.dir}/bin" />
+	 
+	<!-- Output, Jar -->
+	<property name="dist.dir" location="${staging.dir}/dist" />
+	 
+	
+	<target name="main" depends="clean, compile, dist" />
+
+	<target name="clean" description="Flush staging directory">
+	    <delete dir="${staging.dir}" failonerror="false"/>   
+	</target>
+
+	<target name="init">
+	    <mkdir dir="${staging.dir}" />
+	    <mkdir dir="${build.dir}" />
+	</target>
+	 
+	<target name="compile" depends="clean, init">
+		<javac srcdir="${src.dir}" destdir="${build.dir}" deprecation="off" debug="on" includeantruntime="true" encoding="UTF-8">
+			<classpath refid="classpath"/>
+		</javac>
+	</target>
+	 
+	<target name="dist" depends="compile" description="package, output to JAR">
+	    <mkdir dir="${dist.dir}" />
+	    <jar jarfile="${dist.dir}/${projectName}.jar" basedir="${build.dir}" >
+	        <!--manifest>
+	            <attribute name="Main-Class" value="${projectName}/AntProject" />
+	        </manifest-->
+	    </jar>
+	</target>
+	
+</project>

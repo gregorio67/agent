@@ -1,0 +1,21 @@
+DROP TABLE USER_INFO;
+
+CREATE TABLE USER_INFO (
+   USER_ID 			VARCHAR(50) NOT NULL,
+   USER_NAME 		VARCHAR(50),
+   USER_PASSWORD 	VARCHAR(100) NOT NULL,
+   USER_ROLE        BIGINT(5) NOT NULL,
+   USE_YN  			VARCHAR(1),
+   REG_USER         VARCHAR(50),
+   REG_DATE         VARCHAR(20), 
+   constraint HOST_INFO_UN unique (USER_ID)     
+ );
+ 
+ ALTER TABLE USER_INFO
+ ADD CONSTRAINT PK_MENU_LIST PRIMARY KEY (USER_ID);
+  
+
+--Password :1
+INSERT INTO USER_INFO VALUES('admin', 'Administrator', '$2a$10$cKM9hmNitUdmvg4CGhI.K.jOptlTOfWBqcWgPDQ5jI9JwWB2eu17a', '1', 'Y', '', '');
+commit; 
+

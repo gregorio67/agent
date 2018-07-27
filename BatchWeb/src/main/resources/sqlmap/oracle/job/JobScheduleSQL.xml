@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--=========================================================================-->
+<!-- NAME : BatchResultSQL.xml                                               -->
+<!-- DESC : Batch Job Result                                                 -->
+<!--=========================================================================-->
+<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+<!-- ==========  ============  ==============================================-->
+<!-- 2017.09.14  Gregorio Kim    Initial Creation                            -->
+<!--=========================================================================-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="web.batchJobList">
+	
+	<!--=========================================================================-->
+	<!-- NAME : selJobListCount       		                                     -->
+	<!-- DESC : Retrieve Job Schedule   	                                     -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                              -->
+	<!--=========================================================================-->
+	<select id="selJobListCount" parameterType="java.util.Map" resultType="java.lang.Integer">  
+		SELECT COUNT(*)
+		FROM BATCH_JOB_LIST
+		WHERE  1 = 1
+		<if test="jobid != null and jobid !=''">
+		AND JOB_ID = #{jobId}
+		</if>		
+		<if test="jobName != null and jobName !=''">
+		AND JOB_NAME LIKE '%' || #{jobName} || '%'
+		</if>
+		<if test="jobPath != null and jobPath !=''">
+		AND JOB_PATH LIKE '%' || #{jobPath} || '%'
+		</if>  
+		<if test="approveStatus != null and approveStatus != ''">
+		AND USE_YN = #{approveStatus}
+		</if>
+		<if test="useYn != null and useYn != ''">
+		AND USE_YN = #{useYn}
+		</if>
+		<if test="fromDt != null and fromDt != ''">
+			<![CDATA[
+			AND TRUNC(REG_DATE) <= TO_DATE(#{toFrom}, 'YYYY-MM-DD')
+			]]>
+		</if>
+		<if test="toDt != null and toDt != ''">
+			<![CDATA[
+			AND TRUNC(REG_DATE) <= TO_DATE(#{toDt}, 'YYYY-MM-DD')
+			]]>
+		</if>		
+		<if test="regUser != null and regUser != ''">
+		AND REG_USER = #{regUser}
+		</if>
+	</select>	
+	
+	<!--=========================================================================-->
+	<!-- NAME : selJobList   	       		                                     -->
+	<!-- DESC : Retrieve Job Schedule   	                                     -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                              -->
+	<!--=========================================================================-->
+	<select id="selJobList" parameterType="java.util.Map" resultType="camelMap"> 
+		<include refid="Page.pageHeader" />
+		SELECT JOB_ID
+		       ,JOB_PATH
+		       ,JOB_NAME
+		       ,JOB_DEFAULT_PARAM
+		       ,JOB_EXEUCTE_PERIOD
+		       ,JOB_SHELL_LOC
+		       ,JOB_SHELL_NAME
+		       ,JOB_AGENT_HOST
+		       ,JOB_AGENT_PORT
+		       ,PREV_JOB_ID
+		       ,NEXT_JOB_ID
+		       ,APPROVE_STATUS
+		       ,USE_YN
+		FROM BATCH_JOB_LIST
+		WHERE  1 = 1
+		<if test="jobId != null and jobId !=''">
+		AND JOB_ID = #{jobId}
+		</if>
+		<if test="jobName != null and jobName !=''">
+		AND JOB_NAME LIKE '%' || #{jobName} || '%'
+		</if>
+		<if test="jobPath != null and jobPath !=''">
+		AND JOB_PATH LIKE '%' || #{jobPath} || '%'
+		</if>  
+		<if test="approveStatus != null and approveStatus != ''">
+		AND APPROVE_STATUS = #{approveStatus}
+		</if>
+		<if test="useYn != null and useYn != ''">
+		AND USE_YN = #{useYn}
+		</if>
+		<if test="regUser != null and regUser != ''">
+		AND REG_USER = #{regUser}
+		</if>
+		<if test="fromDt != null and fromDt != ''">
+			<![CDATA[
+			AND TRUNC(REG_DATE) <= TO_DATE(#{toFrom}, 'YYYY-MM-DD')
+			]]>
+		</if>
+		<if test="toDt != null and toDt != ''">
+			<![CDATA[
+			AND TRUNC(REG_DATE) <= TO_DATE(#{toDt}, 'YYYY-MM-DD')
+			]]>
+		</if>		
+		<include refid="Page.pageFooter" />
+	</select>
+		
+	<!--=========================================================================-->
+	<!-- NAME : selJobList   	       		                                     -->
+	<!-- DESC : Retrieve Job Schedule   	                                     -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                              -->
+	<!--=========================================================================-->	
+	<select id="selCronJobList" parameterType="java.util.Map" resultType="camelMap"> 
+		SELECT JOB_ID
+		       ,JOB_PATH
+		       ,JOB_NAME
+		       ,JOB_DEFAULT_PARAM
+		       ,JOB_EXEUCTE_PERIOD
+		       ,JOB_SHELL_LOC
+		       ,JOB_SHELL_NAME
+		       ,JOB_AGENT_HOST
+		       ,JOB_AGENT_PORT
+		       ,PREV_JOB_ID
+		       ,NEXT_JOB_ID
+		       ,APPROVE_STATUS
+		       ,USE_YN
+		FROM BATCH_JOB_LIST
+		WHERE  1 = 1
+		AND    USE_YN = 'Y'
+		AND    APPROVE_STATUS = 'Y'
+	</select>	
+	<!--=========================================================================-->
+	<!-- NAME : selJobItem   	       		                                     -->
+	<!-- DESC : Retrieve Job Schedule Item 	                                     -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                              -->
+	<!--=========================================================================-->
+	<select id="selJobItem" parameterType="java.util.Map" resultType="camelMap">  
+		SELECT JOB_ID
+		       ,JOB_PATH
+		       ,JOB_NAME
+		       ,JOB_DEFAULT_PARAM
+		       ,JOB_EXEUCTE_PERIOD
+		       ,JOB_SHELL_LOC
+		       ,JOB_SHELL_NAME
+		       ,JOB_AGENT_HOST
+		       ,JOB_AGENT_PORT
+		       ,PREV_JOB_ID
+		       ,NEXT_JOB_ID
+		       ,APPROVE_STATUS
+		       ,USE_YN
+		FROM BATCH_JOB_LIST
+		
+		WHERE 1 = 1
+		<if test="jobName != null and jobName !=''">
+		AND JOB_NAME = #{jobName}
+		</if>
+		<if test="jobPath != null and jobPath !=''">
+		AND JOB_PATH = #{jobPath}
+		</if>  
+		<if test="approveStatus != null and approveStatus != ''">
+		AND APPROVE_STATUS = #{approveStatus}
+		</if>   	
+		<if test="useYn != null and useYn != ''">
+		AND USE_YN = #{useYn}
+		</if>   	
+	</select>
+
+	<!--=========================================================================-->
+	<!-- NAME : selJobItemWithId   	       		                                 -->
+	<!-- DESC : Retrieve Job Schedule Item with JobId                            -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                              -->
+	<!--=========================================================================-->
+	<select id="selJobItemWithId" parameterType="java.util.Map" resultType="camelMap">  
+		SELECT JOB_ID
+		       ,JOB_PATH
+		       ,JOB_NAME
+		       ,JOB_DEFAULT_PARAM
+		       ,JOB_EXEUCTE_PERIOD
+		       ,JOB_SHELL_LOC
+		       ,JOB_SHELL_NAME
+		       ,JOB_AGENT_HOST
+		       ,JOB_AGENT_PORT
+		       ,PREV_JOB_ID
+		       ,NEXT_JOB_ID
+		       ,APPROVE_STATUS
+		       ,USE_YN
+		FROM BATCH_JOB_LIST
+		WHERE JOB_ID = #{jobId}
+	</select>	
+
+	<!--=========================================================================-->
+	<!-- NAME : insJobItem   	       			                                 -->
+	<!-- DESC : Insert Job Schedule Item    			                         -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                              -->
+	<!--=========================================================================-->
+	<insert id="insJobItem" parameterType="java.util.Map">
+		INSERT INTO BATCH_JOB_LIST (
+		   JOB_ID
+		  ,JOB_PATH
+		  ,JOB_NAME
+		  ,JOB_DEFAULT_PARAM
+		  ,JOB_EXEUCTE_PERIOD
+		  ,JOB_EXEUCTE_PERIOD_TEXT
+		  ,JOB_SHELL_LOC
+		  ,JOB_SHELL_NAME
+          ,JOB_AGENT_HOST
+	      ,JOB_AGENT_PORT
+		  ,PREV_JOB_ID
+		  ,NEXT_JOB_ID
+		  ,APPROVE_STATUS
+		  ,USE_YN
+		  ,REG_USER
+		  ,REG_DATE
+		)
+		VALUES (
+		   SEQ_JOB_LIST.nextval
+		  ,#{jobPath}
+		  ,#{jobName}
+		  ,#{jobDefaultParam}
+		  ,#{jobExeuctePeriod}
+		  ,#{jobExeuctePeriodText}
+		  ,#{jobShellLoc}
+		  ,#{jobShellName}
+		  ,#{jobAgentHost}
+		  ,#{jobAgnetPort}
+		  ,#{nextJobId}		
+		  ,#{prevJobId}
+		  ,#{approveStatus}
+		  ,#{useYn}
+		  ,#{regUser}
+		  ,SYSDATE		
+		)
+	</insert>
+
+	<!--=========================================================================-->
+	<!-- NAME : updJobItem   	       			                                 -->
+	<!-- DESC : Update Job Schedule Item    			                         -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                              -->
+	<!--=========================================================================-->	
+	<update id="updJobItem" parameterType="java.util.Map">
+		UPDATE BATCH_JOB_LIST
+		SET 
+			REG_DATE = SYSDATE
+		  <if test="jobPath != null and jobDefaultParam != ''">
+		   ,JOB_PATH = #{jobPath}
+		  </if>
+		  <if test="jobDefaultParam != null and jobDefaultParam != ''">
+		  ,JOB_DEFAULT_PARAM = #{jobDefaultParam}
+		  </if>
+		  <if test="jobExcePeriod != null and jobExcePeriod != ''">
+		  ,JOB_EXEUCTE_PERIOD = #{jobExcePeriod}
+		  </if>
+		  <if test="jobExecutePeriodText != null and jobExecutePeriodText != ''">
+		  ,JOB_EXEUCTE_PERIOD_TEXT = #{jobExecutePeriodText}
+		  </if>
+		  <if test="jobShellLoc != null and jobShellLoc != ''">
+		  ,JOB_SHELL_LOC = #{jobShellLoc}
+		  </if>
+		  <if test="jobShellName != null and jobShellName != ''">
+		  ,JOB_SHELL_NAME = #{jobShellName}
+		  </if>
+		  <if test="jobAgentHost != null and jobAgentHost != ''">
+		  ,JOB_AGENT_HOST = #{jobAgentHost}
+		  </if>
+		  <if test="jobAgentPort != null and jobAgentPort != ''">
+		  ,JOB_AGENT_PORT = #{jobAgentPort}
+		  </if>
+		  <if test="prevJobId != null and prevJobId != ''">
+		  ,PREV_JOB_ID = #{prevJobId}
+		  </if>
+		  <if test="nextJobId != null and nextJobId != ''">
+		  ,NEXT_JOB_ID = #{nextJobId}
+		  </if>
+		  <if test="approveStatus != null and approveStatus != ''">
+		  ,APPROVE_STATUS = #{approveStatus}
+		  </if>
+		  <if test="useYn != null and useYn != ''">
+		  ,USE_YN = #{useYn}
+		  </if>
+		  <if test="regUser != null and regUser != ''">
+		  ,REG_USER = #{regUser}
+		  </if>	
+		WHERE 1 = 1
+		AND	  JOB_NAME = #{jobName} 	
+	</update>
+	<!--=========================================================================-->
+	<!-- NAME : delJobItem   	       			                                 -->
+	<!-- DESC : Delete Job Schedule Item    			                         -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                              -->
+	<!--=========================================================================-->		
+	<delete id="delJobItem" parameterType="java.util.Map">
+		DELETE FROM BATCH_JOB_LIST
+		WHERE 1 = 1
+		AND	  JOB_NAME = #{jobName} 	
+	</delete>
+</mapper>

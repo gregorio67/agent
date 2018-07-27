@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--=========================================================================-->
+<!-- NAME : BatchResultSQL.xml                                               -->
+<!-- DESC : Batch Job Result                                                 -->
+<!--=========================================================================-->
+<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+<!-- ==========  ============  ==============================================-->
+<!-- 2017.09.14  Gregorio Kim    Initial Creation 	                         -->
+<!--=========================================================================-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="deploy.command">
+
+	<!--=========================================================================-->
+	<!-- NAME : selCpuInfoItem                                                   -->
+	<!-- DESC : Retrieve  HOST Information                                       -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selDeployCommandItem" parameterType="hashmap" resultType="camelMap">
+		SELECT  SHELL_COMMAND
+			   ,SHELL_NAME
+			   ,SHELL_PARAMS 
+		FROM  DEPLOY_COMMAND
+		WHERE 1 = 1
+		AND HOST_NAME = #{hostName}
+		AND IP_ADDR = #{ipAddr}
+		AND COMMAND = #{command}
+		AND USE_YN = 'Y'
+	</select>
+
+	<!--=========================================================================-->
+	<!-- NAME : selDeployTargetList                                              -->
+	<!-- DESC : Retrieve  HOST Information                                       -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2017.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->
+	<select id="selDeployTargetList" parameterType="hashmap" resultType="camelMap">
+		SELECT  SEQ
+		    	,HOST_NAME
+		    	,IP_ADDR
+		    	,LISTEN_PORT
+		    	,DEPLOY_TYPE
+		FROM  DEPLOY_TARGET
+		WHERE 1 = 1
+		<if test="hostName != null and hostName !=''">
+		AND HOST_NAME = #{hostName}
+		</if>
+		<if test="deployType != null and deployType !=''">
+		AND DEPLOY_TYPE = #{deployType}
+		</if>
+		ORDER BY HOST_NAME, DEPLOY_TYPE
+		<include refid="Page.mysqlpageOffset" />
+	</select>
+
+	<!--=========================================================================-->
+	<!-- NAME : selHostNameList                                            	    -->
+	<!-- DESC : Insert Menu											             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->	
+	<select id="selHostNameList" resultType="camelMap">
+		SELECT  DISTINCT(HOST_NAME)
+		FROM  DEPLOY_TARGET
+		WHERE 1 = 1
+		AND   USE_YN = 'Y'
+	</select>
+
+	<!--=========================================================================-->
+	<!-- NAME : selDeployTypeList                                          	    -->
+	<!-- DESC : Insert Menu											             -->
+	<!--=========================================================================-->
+	<!--    DATE        AUTHOR                      DESCRIPTION                  -->
+	<!-- ==========  ============  ==============================================-->
+	<!-- 2018.05.13  Gregorio Kim    Initial Creation                            -->
+	<!--=========================================================================-->	
+	<select id="selDeployTypeList" resultType="camelMap">
+		SELECT  DEPLOY_TYPE
+		FROM  DEPLOY_TYPE
+		WHERE 1 = 1
+	</select>
+
+</mapper>
