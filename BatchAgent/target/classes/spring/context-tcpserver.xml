@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- TCP Server (Netty): Batch Agent Listen -->
+	<bean id="tcpServer" class="batch.agent.tcp.TCPServer" init-method="initialize" destroy-method="stop">
+		<property name="channelInitializer">
+			<!-- TCP Request and Response Handler -->
+			<bean id="channelHandler" class="batch.agent.tcp.handler.SocketChannelInitializer">
+				<property name="handlerAdapter" ref="byteHandler" />
+			</bean>
+		</property>
+		<!-- Listen TCP Port -->
+		<property name="port" value="#{config['tcp.listen.port']}" />
+		<!-- Keep alive -->
+		<property name="keepAlive" value="true" />
+		<property name="backlog" value="#{config['tcp.backlog.count']}" />
+		<property name="workerThreadCount" value="#{config['work.thread.count']}" />
+		<property name="bossThreadCount" value="#{config['boss.thread.count']}" />				
+	</bean>
+
+	<!--	-->
+	<bean id="byteHandler" class="batch.agent.tcp.handler.ByteServerHandler" />
+	
+</beans>

@@ -1,0 +1,68 @@
+﻿<include>
+	<property scope="context" name="LOG_DIR" value="/logs001/sehati/dsc/app" />
+	<property name="APP_LOG" value="dsc_app" />
+	<property name="ERR_LOG" value="dsc_error" />
+	<property name="SQL_LOG" value="dsc_sql" />
+	<property name="pattern" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{50}.%M\(%line\) | %msg%n" />	
+	
+	<appender name="applog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_DIR}/${APP_LOG}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!--
+				daily rollover. Make sure the path matches the one in the file element or else
+				the rollover logs are placed in the working directory.
+			-->
+			<fileNamePattern>${LOG_DIR}/%d{yyyy-MM, aux}/${APP_LOG}.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>500MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+
+			<!-- keep 7 days' worth of history -->
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<charset>UTF-8</charset>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{50}.%M\(%line\) | %msg%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+	</appender>
+
+
+	<!-- 파일 예외(Exception) 발생 출력 Appender -->
+	<appender name="errorlog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_DIR}/${ERR_LOG}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!--
+				daily rollover. Make sure the path matches the one in the file element or else
+				the rollover logs are placed in the working directory.
+			-->
+			<fileNamePattern>${LOG_DIR}/%d{yyyy-MM, aux}/${ERR_LOG}.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>500MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+
+			<!-- keep 7 days' worth of history -->
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<charset>UTF-8</charset>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{50}.%M\(%line\) | %msg%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>WARN</level>
+        </filter>
+	</appender>
+</include>
+
+
+
+
+
+
+

@@ -1,0 +1,1 @@
+"C:/STIS/bin/jdk1.7.0_80/bin/java -Xms512m -Xmx512m -Dfile.encoding=UTF-8 -cp D:/batch/.;D:/batch/lib/* sehati.batch.sample.runner.SampleDB2FileJobRunner /jobs/dur/sample/SampleDB2FileJob.xml SampleDBFileJob outFile=file:D:/batch/result/message.txt useFlag=Y  " 

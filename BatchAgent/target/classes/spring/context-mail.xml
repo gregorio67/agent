@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"   
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    					http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"> 
+    
+    
+	
+	<!-- Spring mail sender -->
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.gmail.com" />
+		<property name="port" value="587"/>
+		<property name="username" value="" />
+		<property name="password" value="" />
+		<property name="javaMailProperties" ref="javaMailProperties" />
+	</bean>
+	
+	<!-- Mail Properties -->
+	<util:properties id="javaMailProperties">
+		<prop key="mail.smtp.starttls.enable">true</prop>
+		<prop key="mail.smtp.auth">true</prop>
+		<prop key="mail.transport.protocol">smtp</prop>
+	</util:properties>
+	
+</beans>
+

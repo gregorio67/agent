@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration scan="true" scanPeriod="60 seconds">
+
+	<property file="${user.dir}/conf/logback.properties" />
+
+	<!--  Application Log Appender -->
+	<appender name="applog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.dir}/${app.log.name}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.dir}/%d{yyyy-MM, aux}/${app.log.name}.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>${max.log.file.size}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>${max.history}</maxHistory>
+		</rollingPolicy>
+
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<charset>UTF-8</charset>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{50}.%M\(%line\) | %msg%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>${log.level}</level>
+		</filter>
+	</appender>
+
+
+	<!-- Error Log Appender -->
+	<appender name="errorlog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${log.dir}/${err.log.name}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.dir}/%d{yyyy-MM, aux}/${err.log.name}.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>${max.log.file.size}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>${max.history}</maxHistory>
+		</rollingPolicy>
+
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<charset>UTF-8</charset>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{50}.%M\(%line\) | %msg%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>WARN</level>
+        </filter>
+	</appender>
+	
+	<!-- SQL Log Appender -->
+	<appender name="sqllog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_DIR}/${SQL_LOG}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.dir}/%d{yyyy-MM, aux}/${sql.log.name}.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>${max.log.file.size}</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+			<maxHistory>${max.history}</maxHistory>
+		</rollingPolicy>
+
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<charset>UTF-8</charset>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{50}.%M\(%line\) | %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- End log appender -->	
+	<logger name="batch.agent" level="${log.level}" additivity="false">
+		<appender-ref ref="applog" />
+		<appender-ref ref="errorlog" />
+	</logger>
+
+
+	<logger name="org.springframework" level="${log.level}" additivity="false">
+		<appender-ref ref="applog" />
+		<appender-ref ref="errorlog" />
+	</logger>
+
+	<logger name="org.springframework.jdbc" additivity="false">
+        <level value="WARN" />
+		<appender-ref ref="errorlog" />
+    </logger>
+
+	<logger name="org.mybatis.spring" level="${log.level}" additivity="false">
+		<appender-ref ref="applog" />
+		<appender-ref ref="errorlog" />
+	</logger>
+
+	<logger name="io.netty" level="${log.level}" additivity="false">
+		<appender-ref ref="applog" />
+		<appender-ref ref="errorlog" />
+	</logger>
+	
+	<logger name="org.apache.http" level="${log.level}" additivity="false">
+		<appender-ref ref="applog" />
+		<appender-ref ref="errorlog" />
+	</logger>
+
+	<logger name="org.apache.ibatis" level="${log.level}" additivity="false">
+		<appender-ref ref="applog" />
+		<appender-ref ref="errorlog" />
+	</logger>
+
+	<logger name="org.quartz" level="${log.level}" additivity="false">
+		<appender-ref ref="applog" />
+		<appender-ref ref="errorlog" />
+	</logger>
+
+	<!-- SQL base level -->
+	<logger name="java.sql" additivity="false">
+		<level value="WARN" />
+		<appender-ref ref="errorlog" />
+	</logger>
+
+	<!--JDBC SQL Query Print logging level-->
+	<logger name="jdbc.connection" level="OFF" additivity="false"> 
+		<appender-ref ref="errorlog" />
+	</logger>
+
+    <logger name="jdbc.resultset" level="OFF" additivity="false"> 
+		<appender-ref ref="errorlog" />
+    </logger>
+
+	<logger name="jdbc.audit" level="OFF" additivity="false"> 
+		<appender-ref ref="errorlog" />
+	</logger>
+
+	<logger name="jdbc.sqltiming" level="OFF" additivity="false"> 
+		<appender-ref ref="sqllog" />
+    </logger>
+
+	<!-- want to log sql result, set level info  -->
+	<logger name="jdbc.resultsettable" level="INFO" additivity="false"> 
+		<appender-ref ref="sqllog" />
+	</logger>
+	
+	<logger name="jdbc.sqlonly" level="DEBUG" additivity="false">
+		<appender-ref ref="sqllog" />
+	</logger>
+
+	<root level="${log.level}">
+		<appender-ref ref="console" />
+		<appender-ref ref="errorlog" />
+	</root>
+	
+</configuration>
